@@ -27,5 +27,5 @@ public class Pedido extends Mesa {
     public void setLucro(double lucro) {
         this.lucro = lucro;
     }
-    
+
 }
