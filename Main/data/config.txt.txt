@@ -1,7 +1,6 @@
-caminho_ficheiros=./data/
-separador=;
-unidades_tempo_dia=24
-tempo_espera_mesa=3
-tempo_espera_atendimento=5
-custo_cliente_nao_atendido=10
-password=1234
+caminhoFicheiros: data/
+separador: ;
+unidadesTempoDia: 24
+tempoEsperaAcao: 5
+custoClienteNaoAtendido: 10.5
+password: admin123
