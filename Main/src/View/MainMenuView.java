@@ -1,6 +1,10 @@
 package View;
 
 import Controller.ConfiguracoesController;
+import Controller.ControllerMesa;
+import Controller.ControllerPrato;
+
+import javax.swing.text.View;
 import java.util.Scanner;
 
 public class MainMenuView {
@@ -16,11 +20,12 @@ public class MainMenuView {
 
         while (running) {
             System.out.println("=== Gestão de Restaurante ===");
-            System.out.println("1. Gerir Mesas e Menus");
-            System.out.println("2. Gerir Dia-a-Dia");
-            System.out.println("3. Consultar Estatísticas");
-            System.out.println("4. Configurações");
-            System.out.println("5. Sair");
+            System.out.println("1. Gerir Mesas");
+            System.out.println("2. Gerir Menus");
+            System.out.println("3. Gerir Dia-a-Dia");
+            System.out.println("4. Consultar Estatísticas");
+            System.out.println("5. Configurações");
+            System.out.println("6. Sair");
             System.out.print("Escolha uma opção: ");
 
             int opcao = scanner.nextInt();
@@ -28,19 +33,24 @@ public class MainMenuView {
 
             switch (opcao) {
                 case 1:
-                    System.out.println("Opção de gerir mesas e menus ainda não implementada.");
+                    ViewMesa viewMesa = new ViewMesa(new ControllerMesa());
+                    viewMesa.exibirMenu();
                     break;
                 case 2:
-                    System.out.println("Opção de gerir dia-a-dia ainda não implementada.");
+                    ViewPrato viewPrato = new ViewPrato(new ControllerPrato());
+                    viewPrato.exibirMenu();
                     break;
                 case 3:
-                    System.out.println("Opção de consultar estatísticas ainda não implementada.");
+                    System.out.println("Opção de gerir dia-a-dia ainda não implementada.");
                     break;
                 case 4:
+                    System.out.println("Opção de consultar estatísticas ainda não implementada.");
+                    break;
+                case 5:
                     ConfiguracoesView configuracoesView = new ConfiguracoesView(configuracoesController);
                     configuracoesView.exibirMenu();
                     break;
-                case 5:
+                case 6:
                     System.out.println("Encerrando aplicação...");
                     running = false;
                     break;

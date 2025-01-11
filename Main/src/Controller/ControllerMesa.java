@@ -60,10 +60,24 @@ import java.util.Scanner;
 
         // Exibir todas as mesas
         public void exibirMesas(Mesa[] mesas) {
-            for (Mesa mesa : mesas) {
-                System.out.println("Mesa ID: " + mesa.getId() + ", Lugares: " + mesa.getLugares() + ", Ocupada: " + (mesa.isOcupada() ? "Sim" : "Não"));
+            if (mesas == null || mesas.length == 0) {
+                System.out.println("Não há mesas registadas no sistema.");
+            } else if (mesas.length == 1) {
+                Mesa mesa = mesas[0];
+                System.out.println("======================================");
+                System.out.println("Apenas uma mesa encontrada:");
+                System.out.println("Mesa número: " + mesa.getId() + ", Lugares: " + mesa.getLugares() + ", Ocupada: " + (mesa.isOcupada() ? "Sim" : "Não"));
+                System.out.println("======================================");
+            } else {
+                System.out.println("======================================");
+                System.out.println("Lista de todas as mesas:");
+                for (Mesa mesa : mesas) {
+                    System.out.println("Mesa número: " + mesa.getId() + ", Lugares: " + mesa.getLugares() + ", Ocupada: " + (mesa.isOcupada() ? "Sim" : "Não"));
+                }
+                System.out.println("======================================");
             }
         }
+
 
         // Atualizar (editar) os dados de uma mesa
         public void atualizarMesa(Mesa[] mesas, int idMesa, int lugares, boolean ocupada) {
@@ -92,7 +106,7 @@ import java.util.Scanner;
                 Mesa[] mesasAtualizadas = new Mesa[mesas.length - 1];
                 System.arraycopy(mesas, 0, mesasAtualizadas, 0, index);
                 System.arraycopy(mesas, index + 1, mesasAtualizadas, index, mesas.length - index - 1);
-                System.out.println("Mesa " + idMesa + " deletada.");
+                System.out.println("Mesa " + idMesa + " eliminada.");
                 return mesasAtualizadas;
             } else {
                 System.out.println("Mesa " + idMesa + " não encontrada.");

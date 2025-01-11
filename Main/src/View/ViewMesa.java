@@ -6,15 +6,20 @@ import java.util.Scanner;
 
 public class ViewMesa {
 
-    // Função principal do menu
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        ControllerMesa controller = new ControllerMesa();
-        Mesa[] mesas = controller.carregarMesasDoFicheiro("mesas.txt");
+    private ControllerMesa controller;
+    private Scanner scanner;
 
+    public ViewMesa(ControllerMesa controller) {
+        this.controller = controller;
+        this.scanner = new Scanner(System.in);
+    }
+
+    // Método para exibir o menu e interagir com o usuário
+    public void exibirMenu() {
+        Mesa[] mesas = controller.carregarMesasDoFicheiro("mesas.txt");
         int opcao = -1;
 
-        while (opcao != 4) {
+        while (opcao != 5) {
             // Menu de opções
             System.out.println("Menu:");
             System.out.println("0 - Ler mesas");
@@ -33,9 +38,9 @@ public class ViewMesa {
                     break;
                 case 1:
                     // Criar uma nova mesa
-                    System.out.print("Digite o ID da nova mesa: ");
+                    System.out.print("Introduza o número da nova mesa: ");
                     int idCriar = scanner.nextInt();
-                    System.out.print("Digite o número de lugares: ");
+                    System.out.print("Introduza o número de lugares: ");
                     int lugares = scanner.nextInt();
                     System.out.print("A mesa estará ocupada? (true/false): ");
                     boolean ocupada = scanner.nextBoolean();
@@ -43,9 +48,9 @@ public class ViewMesa {
                     break;
                 case 2:
                     // Editar uma mesa
-                    System.out.print("Digite o ID da mesa que deseja editar: ");
+                    System.out.print("Introduza o número da mesa que deseja editar: ");
                     int idEditar = scanner.nextInt();
-                    System.out.print("Digite o novo número de lugares: ");
+                    System.out.print("Introduza o novo número de lugares: ");
                     lugares = scanner.nextInt();
                     System.out.print("A mesa está ocupada? (true/false): ");
                     ocupada = scanner.nextBoolean();
@@ -53,7 +58,7 @@ public class ViewMesa {
                     break;
                 case 3:
                     // Apagar uma mesa
-                    System.out.print("Digite o ID da mesa que deseja apagar: ");
+                    System.out.print("Introduza o número da mesa que deseja apagar: ");
                     int idDeletar = scanner.nextInt();
                     mesas = controller.eliminarMesa(mesas, idDeletar);
                     break;
@@ -69,8 +74,5 @@ public class ViewMesa {
                     System.out.println("Opção inválida. Tente novamente.");
             }
         }
-
-        scanner.close();
     }
 }
-
