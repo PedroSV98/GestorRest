@@ -13,7 +13,22 @@ public class ConfiguracoesView {
     public void exibirMenu() {
         Scanner scanner = new Scanner(System.in);
         boolean configurando = true;
+        boolean senhaCorreta = false;
 
+        // Permitir tentativas de senha
+        while (!senhaCorreta) {
+            System.out.print("Digite a senha para acessar as configurações: ");
+            String senhaDigitada = scanner.nextLine();
+
+            // Verificar se a senha está correta
+            if (senhaDigitada.equals(configuracoesController.getConfiguracoes().getPassword())) {
+                senhaCorreta = true;  // Senha correta, sair do loop
+            } else {
+                System.out.println("Senha incorreta. Tente novamente.");
+            }
+        }
+
+        // Caso a senha esteja correta, exibe o menu de configurações
         while (configurando) {
             System.out.println("=== Configurações ===");
             System.out.println("1. Exibir Configurações Atuais");
@@ -26,8 +41,7 @@ public class ConfiguracoesView {
 
             switch (opcao) {
                 case 1:
-                    configuracoesController.getConfiguracoes().getPropriedades()
-                            .forEach((key, value) -> System.out.println(key + ": " + value));
+                    configuracoesController.getConfiguracoes().exibirConfiguracoes();
                     break;
                 case 2:
                     System.out.print("Digite o nome da configuração: ");
