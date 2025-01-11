@@ -7,9 +7,9 @@ import java.util.Scanner;
 
 public class ControllerPrato {
 
-    // Método para carregar pratos do arquivo
-    public Prato[] carregarPratosDoArquivo(String arquivo) {
-        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+    // Método para carregar pratos do ficheiro
+    public Prato[] carregarPratosDoficheiro(String ficheiro) {
+        try (BufferedReader br = new BufferedReader(new FileReader(ficheiro))) {
             String linha;
             Prato[] pratos = new Prato[0];
 
@@ -33,22 +33,22 @@ public class ControllerPrato {
 
             return pratos;
         } catch (IOException e) {
-            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
-            return new Prato[0]; // Retorna um array vazio se não conseguir ler o arquivo
+            System.out.println("Erro ao ler o ficheiro: " + e.getMessage());
+            return new Prato[0]; // Retorna um array vazio se não conseguir ler o ficheiro
         }
     }
 
-    // Método para gravar os pratos no arquivo
-    public void gravarPratosNoArquivo(Prato[] pratos, String arquivo) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(arquivo))) {
+    // Método para gravar os pratos no ficheiro
+    public void gravarPratosNoficheiro(Prato[] pratos, String ficheiro) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheiro))) {
             for (Prato prato : pratos) {
                 String linha = prato.getNome() + ";" + prato.getCategoria() + ";" + prato.getPC() + ";" + prato.getPV() + ";" + prato.getTempPrep() + ";" + prato.getTempCons() + ";" + prato.isEstado();
                 bw.write(linha);
                 bw.newLine();
             }
-            System.out.println("Pratos gravados com sucesso no arquivo.");
+            System.out.println("Pratos gravados com sucesso no ficheiro.");
         } catch (IOException e) {
-            System.out.println("Erro ao gravar no arquivo: " + e.getMessage());
+            System.out.println("Erro ao gravar no ficheiro: " + e.getMessage());
         }
     }
 
@@ -99,7 +99,7 @@ public class ControllerPrato {
             Prato[] pratosAtualizados = new Prato[pratos.length - 1];
             System.arraycopy(pratos, 0, pratosAtualizados, 0, index);
             System.arraycopy(pratos, index + 1, pratosAtualizados, index, pratos.length - index - 1);
-            System.out.println("Prato " + nome + " deletado.");
+            System.out.println("Prato " + nome + " eliminado.");
             return pratosAtualizados;
         } else {
             System.out.println("Prato " + nome + " não encontrado.");
