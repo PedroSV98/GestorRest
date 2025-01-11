@@ -51,4 +51,9 @@ public class MainMenuView {
 
         scanner.close();
     }
+
+    public static void main(String[] args) {
+        MainMenuView menu = new MainMenuView();
+        menu.exibirMenu();
+    }
 }
