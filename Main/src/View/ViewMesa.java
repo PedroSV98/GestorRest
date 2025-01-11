@@ -2,33 +2,35 @@ package View;
 
 import Controller.ControllerMesa;
 import Model.Mesa;
+
 import java.util.Scanner;
 
 public class ViewMesa {
+    private ControllerMesa controller;
+    private Mesa[] mesas;
 
-    // Função principal do menu
-    public static void main(String[] args) {
+    public ViewMesa() {
+        controller = new ControllerMesa();
+        mesas = controller.carregarMesasDoFicheiro("mesas.txt");
+    }
+
+    public void exibirMenuMesas() {
         Scanner scanner = new Scanner(System.in);
-        ControllerMesa controller = new ControllerMesa();
-        Mesa[] mesas = controller.carregarMesasDoFicheiro("mesas.txt");
+        boolean running = true;
 
-        int opcao = -1;
-
-        while (opcao != 4) {
-            // Menu de opções
-            System.out.println("Menu:");
-            System.out.println("0 - Ler mesas");
-            System.out.println("1 - Criar mesa");
-            System.out.println("2 - Editar mesa");
-            System.out.println("3 - Apagar mesa");
-            System.out.println("4 - Gravar no arquivo");
-            System.out.println("5 - Sair");
+        while (running) {
+            System.out.println("=== Menu de Mesas ===");
+            System.out.println("0 - Listar Mesas");
+            System.out.println("1 - Criar Mesa");
+            System.out.println("2 - Editar Mesa");
+            System.out.println("3 - Apagar Mesa");
+            System.out.println("4 - Gravar Alterações e Voltar");
             System.out.print("Escolha uma opção: ");
-            opcao = scanner.nextInt();
+            int opcao = scanner.nextInt();
 
             switch (opcao) {
                 case 0:
-                    // Ler e exibir mesas
+                    // Listar mesas
                     controller.exibirMesas(mesas);
                     break;
                 case 1:
@@ -42,7 +44,7 @@ public class ViewMesa {
                     mesas = controller.criarMesa(mesas, idCriar, lugares, ocupada);
                     break;
                 case 2:
-                    // Editar uma mesa
+                    // Editar uma mesa existente
                     System.out.print("Digite o ID da mesa que deseja editar: ");
                     int idEditar = scanner.nextInt();
                     System.out.print("Digite o novo número de lugares: ");
@@ -54,23 +56,18 @@ public class ViewMesa {
                 case 3:
                     // Apagar uma mesa
                     System.out.print("Digite o ID da mesa que deseja apagar: ");
-                    int idDeletar = scanner.nextInt();
-                    mesas = controller.eliminarMesa(mesas, idDeletar);
+                    int idApagar = scanner.nextInt();
+                    mesas = controller.eliminarMesa(mesas, idApagar);
                     break;
                 case 4:
-                    // Gravar as mesas no arquivo
+                    // Gravar alterações e voltar
                     controller.gravarMesasNoFicheiro(mesas, "mesas.txt");
-                    break;
-                case 5:
-                    // Sair
-                    System.out.println("Saindo...");
+                    System.out.println("Alterações gravadas. Retornando ao menu principal.");
+                    running = false;
                     break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
         }
-
-        scanner.close();
     }
 }
-
