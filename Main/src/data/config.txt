@@ -1,5 +1,5 @@
 caminhoFicheiros: data/
-separador: ;
+separador: /
 unidadesTempoDia: 24
 tempoEsperaAcao: 5
 custoClienteNaoAtendido: 10.5

@@ -1,61 +1,108 @@
 package View;
 
 import Controller.ConfiguracoesController;
+import Model.Configuracoes;
+
 import java.util.Scanner;
 
+
 public class ConfiguracoesView {
-    private ConfiguracoesController configuracoesController;
+
+    private ConfiguracoesController controller;
 
     public ConfiguracoesView(ConfiguracoesController controller) {
-        this.configuracoesController = controller;
+        this.controller = controller;
     }
 
     public void exibirMenu() {
         Scanner scanner = new Scanner(System.in);
-        boolean configurando = true;
-        boolean senhaCorreta = false;
+        boolean sair = false;
 
-        // Permitir tentativas de senha
-        while (!senhaCorreta) {
-            System.out.print("Digite a senha para acessar as configurações: ");
-            String senhaDigitada = scanner.nextLine();
+        while (!sair) {
+            System.out.println("\n=== Configurações ===");
+            System.out.println("1. Ver Configurações Atuais");
+            System.out.println("2. Atualizar Configuração");
+            System.out.println("3. Guardar Configurações");
+            System.out.println("4. Voltar ao Menu Principal");
 
-            // Verificar se a senha está correta
-            if (senhaDigitada.equals(configuracoesController.getConfiguracoes().getPassword())) {
-                senhaCorreta = true;  // Senha correta, sair do loop
-            } else {
-                System.out.println("Senha incorreta. Tente novamente.");
-            }
-        }
-
-        // Caso a senha esteja correta, exibe o menu de configurações
-        while (configurando) {
-            System.out.println("=== Configurações ===");
-            System.out.println("1. Exibir Configurações Atuais");
-            System.out.println("2. Alterar Configuração");
-            System.out.println("3. Voltar ao Menu Principal");
             System.out.print("Escolha uma opção: ");
-
             int opcao = scanner.nextInt();
-            scanner.nextLine();
+            scanner.nextLine(); // Consumir a quebra de linha
 
             switch (opcao) {
                 case 1:
-                    configuracoesController.getConfiguracoes().exibirConfiguracoes();
+                    mostrarConfiguracoes();
                     break;
                 case 2:
-                    System.out.print("Digite o nome da configuração: ");
-                    String chave = scanner.nextLine();
-                    System.out.print("Digite o novo valor: ");
-                    String valor = scanner.nextLine();
-                    configuracoesController.atualizarConfiguracao(chave, valor);
+                    atualizarConfiguracao(scanner);
                     break;
                 case 3:
-                    configurando = false;
+                    controller.guardar();
+                    break;
+                case 4:
+                    sair = true;
                     break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
         }
     }
+
+    private void mostrarConfiguracoes() {
+        Configuracoes conf = controller.getModelo();
+        System.out.println("\n=== Configurações Atuais ===");
+        System.out.println("caminhoFicheiros: " + conf.getCaminhoFicheiros());
+        System.out.println("separador: " + conf.getSeparador());
+        System.out.println("unidadesTempoDia: " + conf.getUnidadesTempoDia());
+        System.out.println("tempoEsperaAcao: " + conf.getTempoEsperaAcao());
+        System.out.println("custoClienteNaoAtendido: " + conf.getCustoClienteNaoAtendido());
+        System.out.println("password: " + conf.getPassword());
+    }
+
+    private void atualizarConfiguracao(Scanner scanner) {
+        System.out.println("\nCampos disponíveis para atualizar:");
+        System.out.println("- caminhoFicheiros");
+        System.out.println("- separador");
+        System.out.println("- unidadesTempoDia");
+        System.out.println("- tempoEsperaAcao");
+        System.out.println("- custoClienteNaoAtendido");
+        System.out.println("- password");
+
+        System.out.print("\nQual o campo que deseja alterar? ");
+        String campo = scanner.nextLine();
+
+        switch (campo) {
+            case "caminhoFicheiros":
+                System.out.print("Novo valor: ");
+                controller.atualizarCaminhoFicheiros(scanner.nextLine());
+                break;
+            case "separador":
+                System.out.print("Novo valor: ");
+                controller.atualizarSeparador(scanner.nextLine());
+                break;
+            case "unidadesTempoDia":
+                System.out.print("Novo valor (int): ");
+                controller.atualizarUnidadesTempoDia(scanner.nextInt());
+                scanner.nextLine();
+                break;
+            case "tempoEsperaAcao":
+                System.out.print("Novo valor (int): ");
+                controller.atualizarTempoEsperaAcao(scanner.nextInt());
+                scanner.nextLine();
+                break;
+            case "custoClienteNaoAtendido":
+                System.out.print("Novo valor (double): ");
+                controller.atualizarCustoClienteNaoAtendido(scanner.nextDouble());
+                scanner.nextLine();
+                break;
+            case "password":
+                System.out.print("Novo valor: ");
+                controller.atualizarPassword(scanner.nextLine());
+                break;
+            default:
+                System.out.println("Campo inválido. Verifique a lista acima.");
+                break;
+        }
+    }
 }
+
