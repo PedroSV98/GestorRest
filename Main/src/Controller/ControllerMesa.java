@@ -1,130 +1,195 @@
 package Controller;
 
-
 import Model.Mesa;
-import java.io.*;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
-    public class ControllerMesa {
+public class ControllerMesa {
 
-        // Método para carregar mesas do ficheiro
-        public Mesa[] carregarMesasDoFicheiro(String Ficheiro) {
-            try (BufferedReader br = new BufferedReader(new FileReader(Ficheiro))) {
-                String linha;
-                Mesa[] mesas = new Mesa[0];
+    private ConfiguracoesController configController;
+    private String caminhoCompletoMesas; // Ex.: "C:\\...\\data\\Mesas.txt"
 
-                while ((linha = br.readLine()) != null) {
-                    String[] dados = linha.split(";");
-                    int id = Integer.parseInt(dados[0]);
-                    int lugares = Integer.parseInt(dados[1]);
-                    boolean ocupada = Boolean.parseBoolean(dados[2]);
+    public ControllerMesa(ConfiguracoesController configController) {
+        // Guarda a referência do configController
+        this.configController = configController;
 
-                    // Cria uma nova mesa a partir dos dados
-                    Mesa novaMesa = new Mesa(id, ocupada, lugares);
+        // Ir buscar o caminho base (ex.: "C:\\...\\data\\")
+        String basePath = configController.getModelo().getCaminhoFicheiros();
 
-                    // Expande o array de mesas
-                    mesas = Arrays.copyOf(mesas, mesas.length + 1);
-                    mesas[mesas.length - 1] = novaMesa;
-                }
-
-                return mesas;
-            } catch (IOException e) {
-                System.out.println("Erro ao ler o Ficheiro: " + e.getMessage());
-                return new Mesa[0]; // Retorna um array vazio se não conseguir ler o Ficheiro
-            }
-        }
-
-        // Método para gravar as mesas no Ficheiro
-        public void gravarMesasNoFicheiro(Mesa[] mesas, String Ficheiro) {
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(Ficheiro))) {
-                for (Mesa mesa : mesas) {
-                    String linha = mesa.getId() + ";" + mesa.getLugares() + ";" + mesa.isOcupada();
-                    bw.write(linha);
-                    bw.newLine();
-                }
-                System.out.println("Mesas gravadas com sucesso no Ficheiro.");
-            } catch (IOException e) {
-                System.out.println("Erro ao gravar no Ficheiro: " + e.getMessage());
-            }
-        }
-
-        // Criar uma nova mesa
-        public Mesa[] criarMesa(Mesa[] mesas, int id, int lugares, boolean ocupada) {
-            Mesa novaMesa = new Mesa(id, ocupada, lugares);
-            Mesa[] novasMesas = Arrays.copyOf(mesas, mesas.length + 1);
-            novasMesas[novasMesas.length - 1] = novaMesa;
-            System.out.println("Mesa " + id + " criada.");
-            return novasMesas;
-        }
-
-        // Exibir todas as mesas
-        public void exibirMesas(Mesa[] mesas) {
-            if (mesas == null || mesas.length == 0) {
-                System.out.println("Não há mesas registadas no sistema.");
-            } else if (mesas.length == 1) {
-                Mesa mesa = mesas[0];
-                System.out.println("======================================");
-                System.out.println("Apenas uma mesa encontrada:");
-                System.out.println("Mesa número: " + mesa.getId() + ", Lugares: " + mesa.getLugares() + ", Ocupada: " + (mesa.isOcupada() ? "Sim" : "Não"));
-                System.out.println("======================================");
-            } else {
-                System.out.println("======================================");
-                System.out.println("Lista de todas as mesas:");
-                for (Mesa mesa : mesas) {
-                    System.out.println("Mesa número: " + mesa.getId() + ", Lugares: " + mesa.getLugares() + ", Ocupada: " + (mesa.isOcupada() ? "Sim" : "Não"));
-                }
-                System.out.println("======================================");
-            }
-        }
-
-
-        // Atualizar (editar) os dados de uma mesa
-        public void atualizarMesa(Mesa[] mesas, int idMesa, int lugares, boolean ocupada) {
-            Mesa mesa = encontrarMesaPorId(mesas, idMesa);
-            if (mesa != null) {
-                mesa.setLugares(lugares);
-                mesa.setOcupada(ocupada);
-                System.out.println("Mesa " + idMesa + " atualizada.");
-            } else {
-                System.out.println("Mesa " + idMesa + " não encontrada.");
-            }
-        }
-
-        // Eliminar (remover) uma mesa pelo ID
-        public Mesa[] eliminarMesa(Mesa[] mesas, int idMesa) {
-            int index = -1;
-
-            for (int i = 0; i < mesas.length; i++) {
-                if (mesas[i].getId() == idMesa) {
-                    index = i;
-                    break;
-                }
-            }
-
-            if (index != -1) {
-                Mesa[] mesasAtualizadas = new Mesa[mesas.length - 1];
-                System.arraycopy(mesas, 0, mesasAtualizadas, 0, index);
-                System.arraycopy(mesas, index + 1, mesasAtualizadas, index, mesas.length - index - 1);
-                System.out.println("Mesa " + idMesa + " eliminada.");
-                return mesasAtualizadas;
-            } else {
-                System.out.println("Mesa " + idMesa + " não encontrada.");
-                return mesas;
-            }
-        }
-
-        // Método para encontrar uma mesa pelo ID
-        private Mesa encontrarMesaPorId(Mesa[] mesas, int idMesa) {
-            for (Mesa mesa : mesas) {
-                if (mesa.getId() == idMesa) {
-                    return mesa;
-                }
-            }
-            return null;
-        }
-
+        // Concatena o nome do ficheiro específico (ex.: "Mesas.txt")
+        this.caminhoCompletoMesas = basePath + "Mesas.txt";
     }
 
+    /**
+     * Ler as mesas do ficheiro “Mesas.txt” que só tem 'id;lugares'.
+     * O boolean “ocupada” fica apenas em memória, não é carregado do ficheiro.
+     */
+    public Mesa[] carregarMesas() {
+        // 1) Primeiro pass: contar só linhas válidas
+        int numLinhasValidas = 0;
 
+        try (BufferedReader br = new BufferedReader(new FileReader(caminhoCompletoMesas))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                linha = linha.trim();
+                if (linha.isEmpty()) {
+                    // Linha vazia, ignorar
+                    continue;
+                }
 
+                // Separa
+                String[] partes = linha.split(";");
+                if (partes.length >= 2) {  // só conta como válida se tiver pelo menos 2 colunas
+                    numLinhasValidas++;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao ler o ficheiro (contagem): " + e.getMessage());
+            return new Mesa[0];
+        }
+
+        // 2) Criar array do tamanho certo
+        Mesa[] mesas = new Mesa[numLinhasValidas];
+
+        // 3) Segundo pass: preencher
+        try (BufferedReader br = new BufferedReader(new FileReader(caminhoCompletoMesas))) {
+            String linha;
+            int idx = 0;
+            while ((linha = br.readLine()) != null) {
+                linha = linha.trim();
+                if (linha.isEmpty()) {
+                    continue;
+                }
+                String[] partes = linha.split(";");
+                if (partes.length < 2) {
+                    // linha inválida, ignora
+                    System.out.println("Linha inválida (esperava 2 colunas: 'id;lugares'): " + linha);
+                    continue;
+                }
+
+                int id = Integer.parseInt(partes[0]);
+                int lugares = Integer.parseInt(partes[1]);
+                boolean ocupada = false; // valor por defeito
+
+                // só adicionas se ainda houver espaço no array
+                if (idx < mesas.length) {
+                    mesas[idx] = new Mesa(id, ocupada, lugares);
+                    idx++;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao ler o ficheiro (preenchimento): " + e.getMessage());
+            return new Mesa[0];
+        }
+
+        return mesas;
+    }
+
+    /**
+     * Grava as mesas em disco, só com 'id;lugares'.
+     * A ocupação (boolean) NÃO é guardada no ficheiro.
+     */
+    public void gravarMesas(Mesa[] mesas) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminhoCompletoMesas))) {
+            for (Mesa mesa : mesas) {
+                // Formato "id;lugares"
+                String linha = mesa.getId() + ";" + mesa.getLugares();
+                bw.write(linha);
+                bw.newLine();
+            }
+            System.out.println("Mesas gravadas com sucesso em: " + caminhoCompletoMesas);
+        } catch (IOException e) {
+            System.out.println("Erro ao gravar no ficheiro de mesas: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Cria uma nova mesa e devolve um array com +1 elemento.
+     */
+    public Mesa[] criarMesa(Mesa[] mesas, int id, int lugares, boolean ocupada) {
+        Mesa[] novasMesas = new Mesa[mesas.length + 1];
+        // copiar manualmente
+        for (int i = 0; i < mesas.length; i++) {
+            novasMesas[i] = mesas[i];
+        }
+        // colocar a nova mesa na última posição
+        novasMesas[novasMesas.length - 1] = new Mesa(id, ocupada, lugares);
+
+        System.out.println("Mesa " + id + " criada em memória.");
+        return novasMesas;
+    }
+
+    /**
+     * Lista no ecrã as mesas do array.
+     */
+    public void exibirMesas(Mesa[] mesas) {
+        if (mesas == null || mesas.length == 0) {
+            System.out.println("Não há mesas registadas.");
+            return;
+        }
+        System.out.println("\n==== Lista de Mesas ====");
+        for (Mesa m : mesas) {
+            System.out.println("ID: " + m.getId()
+                    + ", Lugares: " + m.getLugares()
+                    + ", Ocupada: " + (m.isOcupada() ? "Sim" : "Não"));
+        }
+    }
+
+    /**
+     * Atualiza (edita) a mesa correspondente a 'idMesa', caso seja encontrada.
+     */
+    public void atualizarMesa(Mesa[] mesas, int idMesa, int novosLugares, boolean novaOcupacao) {
+        Mesa mesa = encontrarMesaPorId(mesas, idMesa);
+        if (mesa != null) {
+            mesa.setLugares(novosLugares);
+            mesa.setOcupada(novaOcupacao);
+            System.out.println("Mesa " + idMesa + " atualizada em memória.");
+        } else {
+            System.out.println("Mesa " + idMesa + " não encontrada.");
+        }
+    }
+
+    /**
+     * Remove (elimina) a mesa com 'idMesa' do array, devolvendo um novo array com -1 elemento.
+     */
+    public Mesa[] eliminarMesa(Mesa[] mesas, int idMesa) {
+        int index = -1;
+        for (int i = 0; i < mesas.length; i++) {
+            if (mesas[i].getId() == idMesa) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            System.out.println("Mesa " + idMesa + " não encontrada.");
+            return mesas; // não modifica o array
+        }
+
+        Mesa[] mesasAtualizadas = new Mesa[mesas.length - 1];
+        // Copiar a parte antes do index
+        for (int i = 0; i < index; i++) {
+            mesasAtualizadas[i] = mesas[i];
+        }
+        // Copiar a parte depois do index
+        for (int i = index + 1; i < mesas.length; i++) {
+            mesasAtualizadas[i - 1] = mesas[i];
+        }
+        System.out.println("Mesa " + idMesa + " eliminada em memória.");
+        return mesasAtualizadas;
+    }
+
+    /**
+     * Método auxiliar para encontrar mesa por ID.
+     */
+    private Mesa encontrarMesaPorId(Mesa[] mesas, int idMesa) {
+        for (Mesa m : mesas) {
+            if (m.getId() == idMesa) {
+                return m;
+            }
+        }
+        return null;
+    }
+}

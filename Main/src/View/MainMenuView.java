@@ -29,13 +29,16 @@ public class MainMenuView {
             System.out.print("Escolha uma opção: ");
 
             int opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir quebra de linha
+            scanner.nextLine(); //
 
             switch (opcao) {
                 case 1:
-                    ViewMesa viewMesa = new ViewMesa(new ControllerMesa());
+                    // Passa o mesmo configuracoesController, para o ControllerMesa saber o caminho
+                    ControllerMesa controllerMesa = new ControllerMesa(configuracoesController);
+                    ViewMesa viewMesa = new ViewMesa(controllerMesa);
                     viewMesa.exibirMenu();
                     break;
+
                 case 2:
                     ViewPrato viewPrato = new ViewPrato(new ControllerPrato());
                     viewPrato.exibirMenu();

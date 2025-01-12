@@ -1,4 +1,8 @@
-P�o de alho;Entrada;1,40;3;1;1;True
+Nome do prato;Categoria;Preço de custo;Preço de venda;Preparação(Unidades de tempo);Consumo(Unidades de tempo);Estado
+
+Alguns exemplos:
+
+Pão de alho;Entrada;1,40;3;1;1;True
 Bacalhau com natas;Principal;3,40;9,99;3;2;True
 Francesinha de frango;Principal;4,5;11;2;2;False
 Francesinha de porco com ovo;Principal;5,90;12,50;2;2;True

@@ -1,5 +1,9 @@
+Nome da reserva;Quantidade de pessoas;Unidade de tempo de chegada
+
+Alguns exemplos:
+
 Manuel Jesus;5;1
-Maria José;2;1
+Maria JosÃ©;2;1
 Alberto Silva;7;1
 Beatriz Ribeiro;4;2
 Ana Fonseca;2;4
