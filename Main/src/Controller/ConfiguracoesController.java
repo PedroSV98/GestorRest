@@ -10,7 +10,7 @@ public class ConfiguracoesController {
     private Configuracoes modelo;
 
     // Aqui definimos o caminho completo do config.txt (ajusta se necessário)
-    private final String CAMINHO_FICHEIRO = "C:\\Users\\Guts\\Documents\\DocumentosDAS\\1ano\\lp1\\GestorRest\\Main\\src\\data\\config.txt";
+    private final String CAMINHO_FICHEIRO = "C:\\Users\\Acer\\Desktop\\LP1\\GestorRest\\Main\\src\\data\\config.txt";
 
     public ConfiguracoesController() {
         // Instancia o modelo com o caminho do ficheiro

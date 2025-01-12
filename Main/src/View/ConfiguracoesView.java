@@ -1,7 +1,9 @@
 package View;
 
 import Controller.ConfiguracoesController;
+import Controller.LoginController;
 import Model.Configuracoes;
+import Model.LoginModel;
 
 import java.util.Scanner;
 
@@ -10,8 +12,12 @@ public class ConfiguracoesView {
 
     private ConfiguracoesController controller;
 
-    public ConfiguracoesView(ConfiguracoesController controller) {
+    private LoginController loginController;
+
+    public ConfiguracoesView(ConfiguracoesController controller, LoginController loginController) {
+
         this.controller = controller;
+        this.loginController = loginController;
     }
 
     public void exibirMenu() {
@@ -96,8 +102,10 @@ public class ConfiguracoesView {
                 scanner.nextLine();
                 break;
             case "password":
-                System.out.print("Novo valor: ");
-                controller.atualizarPassword(scanner.nextLine());
+                LoginModel loginModel = new LoginModel(controller.getModelo()); // Passando o modelo corretamente
+                LoginView loginView = new LoginView(); // Criando a view de login
+                LoginController loginController = new LoginController(loginModel, loginView);
+                loginController.alterarSenha(scanner);
                 break;
             default:
                 System.out.println("Campo inválido. Verifique a lista acima.");

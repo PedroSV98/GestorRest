@@ -3,6 +3,9 @@ package View;
 import Controller.ConfiguracoesController;
 import Controller.ControllerMesa;
 import Controller.ControllerPrato;
+import Controller.LoginController;
+import Model.LoginModel;
+import View.LoginView;
 
 import javax.swing.text.View;
 import java.util.Scanner;
@@ -47,8 +50,10 @@ public class MainMenuView {
                     System.out.println("Opção de consultar estatísticas ainda não implementada.");
                     break;
                 case 5:
-                    ConfiguracoesView configuracoesView = new ConfiguracoesView(configuracoesController);
-                    configuracoesView.exibirMenu();
+                    LoginView loginView = new LoginView();
+                    LoginModel loginModel = new LoginModel(configuracoesController.getModelo());// Criação da view de login
+                    LoginController loginController = new LoginController(loginModel, loginView);  // Criação do controller de login
+                    loginController.iniciarLogin();  // Chama o método de autenticação
                     break;
                 case 6:
                     System.out.println("Encerrando aplicação...");
