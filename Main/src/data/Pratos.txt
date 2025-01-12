@@ -1,6 +1,6 @@
-Pão de alho;Entrada;1,40;3;1;1;True
-Bacalhau com natas;Principal;3,40;9,99;3;2;True
-Francesinha de frango;Principal;4,5;11;2;2;False
-Francesinha de porco com ovo;Principal;5,90;12,50;2;2;True
-Gelado de nata;Sobremesa;1,10;3;1;1;True
-Bolo de bolacha;Sobremesa;2,1;3,5;2;1;True
+Pï¿½o de alho;Entrada;1.4;3.0;1;1;true
+Bacalhau com natas;Principal;3.4;9.99;3;2;true
+Francesinha de frango;Principal;4.5;11.0;2;2;false
+Francesinha de porco com ovo;Principal;5.9;12.5;2;2;true
+Gelado de nata;Sobremesa;1.1;3.0;1;1;true
+Bolo de bolacha;Sobremesa;3.99;5.99;2;3;false

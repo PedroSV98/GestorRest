@@ -3,7 +3,7 @@ package View;
 import Controller.ConfiguracoesController;
 import Controller.ControllerMesa;
 import Controller.ControllerPrato;
-
+import java.util.Locale;
 import javax.swing.text.View;
 import java.util.Scanner;
 
@@ -40,7 +40,8 @@ public class MainMenuView {
                     break;
 
                 case 2:
-                    ViewPrato viewPrato = new ViewPrato(new ControllerPrato());
+                    ControllerPrato controllerPrato = new ControllerPrato(configuracoesController);
+                    ViewPrato viewPrato = new ViewPrato(controllerPrato);
                     viewPrato.exibirMenu();
                     break;
                 case 3:
@@ -66,6 +67,7 @@ public class MainMenuView {
     }
 
     public static void main(String[] args) {
+        Locale.setDefault(new Locale("pt", "PT"));
         MainMenuView menu = new MainMenuView();
         menu.exibirMenu();
     }

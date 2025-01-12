@@ -2,6 +2,7 @@ package Controller;
 
 import Model.Mesa;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class ControllerMesa {
 
@@ -16,13 +17,19 @@ public class ControllerMesa {
     }
 
     /**
-     * Lê o ficheiro e devolve um array NOVO, ignorando o campo 'ocupada'.
+     * Lê o ficheiro (UTF-8) e devolve um array NOVO,
+     * ignorando o campo 'ocupada' (ficará false por omissão).
      * Cada mesa terá 'ocupada = false'. (Modo antigo)
      */
     public Mesa[] carregarMesas() {
-        // Contar as linhas
+        // 1) Contar as linhas válidas
         int numLinhasValidas = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(caminhoCompletoMesas))) {
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(caminhoCompletoMesas),
+                        StandardCharsets.UTF_8
+                )
+        )) {
             String linha;
             while ((linha = br.readLine()) != null) {
                 linha = linha.trim();
@@ -38,9 +45,14 @@ public class ControllerMesa {
             return new Mesa[0];
         }
 
-        // Preencher o array
+        // 2) Criar array e preencher
         Mesa[] mesas = new Mesa[numLinhasValidas];
-        try (BufferedReader br = new BufferedReader(new FileReader(caminhoCompletoMesas))) {
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(caminhoCompletoMesas),
+                        StandardCharsets.UTF_8
+                )
+        )) {
             String linha;
             int idx = 0;
             while ((linha = br.readLine()) != null) {
@@ -56,7 +68,8 @@ public class ControllerMesa {
 
                 int id = Integer.parseInt(partes[0]);
                 int lugares = Integer.parseInt(partes[1]);
-                // ocupada = false, pois o ficheiro não guarda essa info
+
+                // 'ocupada' = false, pois o ficheiro não guarda esse campo
                 mesas[idx] = new Mesa(id, false, lugares);
                 idx++;
             }
@@ -69,11 +82,12 @@ public class ControllerMesa {
     }
 
     /**
-     * Mescla o ficheiro com o array emMemoria.
-     * - Se a mesa (ID) existe em 'emMemoria', mantém 'ocupada' e atualiza apenas 'lugares'.
-     * - Se a mesa não existe em 'emMemoria', cria uma nova mesa (ocupada = false).
+     * Mescla o ficheiro (UTF-8) com o array emMemoria.
+     * - Se a mesa (ID) existe em 'emMemoria', mantém 'ocupada'
+     *   e atualiza apenas 'lugares'.
+     * - Se a mesa não existir, cria nova mesa (ocupada=false).
      */
-    public Mesa[] agruparComFicheiro(Mesa[] emMemoria) {
+    public Mesa[] agruparComFicheiroMesa(Mesa[] emMemoria) {
         String[] linhas = lerLinhasFicheiro(caminhoCompletoMesas);
         if (linhas == null || linhas.length == 0) {
             System.out.println("Ficheiro vazio ou não encontrado. Mantêm-se as mesas em memória.");
@@ -94,13 +108,13 @@ public class ControllerMesa {
             int id = Integer.parseInt(partes[0]);
             int lugares = Integer.parseInt(partes[1]);
 
-            // Verificar se já existe no array emMemoria
+            // Verificar se já existe emMemoria
             Mesa existente = encontrarMesaPorId(emMemoria, id);
             if (existente != null) {
                 // Mantemos 'ocupada', só atualizamos 'lugares'
                 existente.setLugares(lugares);
             } else {
-                // Nova mesa (ocupada = false)
+                // Nova mesa (ocupada = false por defeito)
                 Mesa nova = new Mesa(id, false, lugares);
                 emMemoria = adicionarMesa(emMemoria, nova);
             }
@@ -110,11 +124,17 @@ public class ControllerMesa {
     }
 
     /**
-     * Lê todas as linhas do ficheiro (sem ArrayList).
+     * Lê todas as linhas do ficheiro (UTF-8) sem ArrayList.
      */
     private String[] lerLinhasFicheiro(String caminho) {
         int contagem = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(caminho))) {
+        // 1) Contagem
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(caminho),
+                        StandardCharsets.UTF_8
+                )
+        )) {
             while (br.readLine() != null) {
                 contagem++;
             }
@@ -123,8 +143,14 @@ public class ControllerMesa {
             return null;
         }
 
+        // 2) Ler e armazenar
         String[] linhas = new String[contagem];
-        try (BufferedReader br = new BufferedReader(new FileReader(caminho))) {
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(caminho),
+                        StandardCharsets.UTF_8
+                )
+        )) {
             String linha;
             int idx = 0;
             while ((linha = br.readLine()) != null) {
@@ -151,11 +177,17 @@ public class ControllerMesa {
     }
 
     /**
-     * Grava (id;lugares) no ficheiro. Não grava 'ocupada'.
+     * Grava (id;lugares) no ficheiro (UTF-8). Não grava 'ocupada'.
      */
     public void gravarMesas(Mesa[] mesas) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminhoCompletoMesas))) {
+        try (BufferedWriter bw = new BufferedWriter(
+                new OutputStreamWriter(
+                        new FileOutputStream(caminhoCompletoMesas),
+                        StandardCharsets.UTF_8
+                )
+        )) {
             for (Mesa mesa : mesas) {
+                // Apenas ID e lugares
                 String linha = mesa.getId() + ";" + mesa.getLugares();
                 bw.write(linha);
                 bw.newLine();
@@ -167,7 +199,7 @@ public class ControllerMesa {
     }
 
     /**
-     * Cria uma nova mesa em memória e devolve um array com mais 1 elemento.
+     * Cria uma nova mesa em memória e devolve um array com +1 elemento.
      */
     public Mesa[] criarMesa(Mesa[] mesas, int id, int lugares, boolean ocupada) {
         Mesa[] novas = new Mesa[mesas.length + 1];

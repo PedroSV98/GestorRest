@@ -22,7 +22,7 @@ public class ViewMesa {
 
         while (opcao != 5) {
             System.out.println("\n=== Menu de Mesas ===");
-            System.out.println("0 - Ler mesas do ficheiro");
+            System.out.println("0 - Ler mesas");
             System.out.println("1 - Criar mesa");
             System.out.println("2 - Editar mesa");
             System.out.println("3 - Apagar mesa");
@@ -35,7 +35,7 @@ public class ViewMesa {
             switch (opcao) {
                 case 0:
                     // Junta com o ficheiro, não perdendo o estado de ocupada
-                    mesas = controller.agruparComFicheiro(mesas);
+                    mesas = controller.agruparComFicheiroMesa(mesas);
                     controller.exibirMesas(mesas);
                     break;
 
