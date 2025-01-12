@@ -1,49 +1,36 @@
 package Controller;
 
 import Model.Mesa;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class ControllerMesa {
 
     private ConfiguracoesController configController;
-    private String caminhoCompletoMesas; // Ex.: "C:\\...\\data\\Mesas.txt"
+    private String caminhoCompletoMesas;
 
     public ControllerMesa(ConfiguracoesController configController) {
-        // Guarda a referência do configController
         this.configController = configController;
-
-        // Ir buscar o caminho base (ex.: "C:\\...\\data\\")
+        // Caminho base + "Mesas.txt"
         String basePath = configController.getModelo().getCaminhoFicheiros();
-
-        // Concatena o nome do ficheiro específico (ex.: "Mesas.txt")
         this.caminhoCompletoMesas = basePath + "Mesas.txt";
     }
 
     /**
-     * Ler as mesas do ficheiro “Mesas.txt” que só tem 'id;lugares'.
-     * O boolean “ocupada” fica apenas em memória, não é carregado do ficheiro.
+     * Lê o ficheiro e devolve um array NOVO, ignorando o campo 'ocupada'.
+     * Cada mesa terá 'ocupada = false'. (Modo antigo)
      */
     public Mesa[] carregarMesas() {
-        // 1) Primeiro pass: contar só linhas válidas
+        // Contar as linhas
         int numLinhasValidas = 0;
-
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoCompletoMesas))) {
             String linha;
             while ((linha = br.readLine()) != null) {
                 linha = linha.trim();
-                if (linha.isEmpty()) {
-                    // Linha vazia, ignorar
-                    continue;
-                }
-
-                // Separa
-                String[] partes = linha.split(";");
-                if (partes.length >= 2) {  // só conta como válida se tiver pelo menos 2 colunas
-                    numLinhasValidas++;
+                if (!linha.isEmpty()) {
+                    String[] partes = linha.split(";");
+                    if (partes.length >= 2) {
+                        numLinhasValidas++;
+                    }
                 }
             }
         } catch (IOException e) {
@@ -51,10 +38,8 @@ public class ControllerMesa {
             return new Mesa[0];
         }
 
-        // 2) Criar array do tamanho certo
+        // Preencher o array
         Mesa[] mesas = new Mesa[numLinhasValidas];
-
-        // 3) Segundo pass: preencher
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoCompletoMesas))) {
             String linha;
             int idx = 0;
@@ -65,20 +50,15 @@ public class ControllerMesa {
                 }
                 String[] partes = linha.split(";");
                 if (partes.length < 2) {
-                    // linha inválida, ignora
-                    System.out.println("Linha inválida (esperava 2 colunas: 'id;lugares'): " + linha);
+                    System.out.println("Linha inválida: " + linha);
                     continue;
                 }
 
                 int id = Integer.parseInt(partes[0]);
                 int lugares = Integer.parseInt(partes[1]);
-                boolean ocupada = false; // valor por defeito
-
-                // só adicionas se ainda houver espaço no array
-                if (idx < mesas.length) {
-                    mesas[idx] = new Mesa(id, ocupada, lugares);
-                    idx++;
-                }
+                // ocupada = false, pois o ficheiro não guarda essa info
+                mesas[idx] = new Mesa(id, false, lugares);
+                idx++;
             }
         } catch (IOException e) {
             System.out.println("Erro ao ler o ficheiro (preenchimento): " + e.getMessage());
@@ -89,49 +69,127 @@ public class ControllerMesa {
     }
 
     /**
-     * Grava as mesas em disco, só com 'id;lugares'.
-     * A ocupação (boolean) NÃO é guardada no ficheiro.
+     * Mescla o ficheiro com o array emMemoria.
+     * - Se a mesa (ID) existe em 'emMemoria', mantém 'ocupada' e atualiza apenas 'lugares'.
+     * - Se a mesa não existe em 'emMemoria', cria uma nova mesa (ocupada = false).
+     */
+    public Mesa[] agruparComFicheiro(Mesa[] emMemoria) {
+        String[] linhas = lerLinhasFicheiro(caminhoCompletoMesas);
+        if (linhas == null || linhas.length == 0) {
+            System.out.println("Ficheiro vazio ou não encontrado. Mantêm-se as mesas em memória.");
+            return emMemoria;
+        }
+
+        for (String linha : linhas) {
+            if (linha == null) continue;
+            linha = linha.trim();
+            if (linha.isEmpty()) continue;
+
+            String[] partes = linha.split(";");
+            if (partes.length < 2) {
+                System.out.println("Linha inválida (esperava 'id;lugares'): " + linha);
+                continue;
+            }
+
+            int id = Integer.parseInt(partes[0]);
+            int lugares = Integer.parseInt(partes[1]);
+
+            // Verificar se já existe no array emMemoria
+            Mesa existente = encontrarMesaPorId(emMemoria, id);
+            if (existente != null) {
+                // Mantemos 'ocupada', só atualizamos 'lugares'
+                existente.setLugares(lugares);
+            } else {
+                // Nova mesa (ocupada = false)
+                Mesa nova = new Mesa(id, false, lugares);
+                emMemoria = adicionarMesa(emMemoria, nova);
+            }
+        }
+
+        return emMemoria;
+    }
+
+    /**
+     * Lê todas as linhas do ficheiro (sem ArrayList).
+     */
+    private String[] lerLinhasFicheiro(String caminho) {
+        int contagem = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(caminho))) {
+            while (br.readLine() != null) {
+                contagem++;
+            }
+        } catch (IOException e) {
+            System.out.println("Erro a contar linhas: " + e.getMessage());
+            return null;
+        }
+
+        String[] linhas = new String[contagem];
+        try (BufferedReader br = new BufferedReader(new FileReader(caminho))) {
+            String linha;
+            int idx = 0;
+            while ((linha = br.readLine()) != null) {
+                linhas[idx] = linha;
+                idx++;
+            }
+        } catch (IOException e) {
+            System.out.println("Erro a ler linhas: " + e.getMessage());
+            return null;
+        }
+        return linhas;
+    }
+
+    /**
+     * Adiciona uma nova mesa a um array, criando um array maior em +1 posição.
+     */
+    private Mesa[] adicionarMesa(Mesa[] originais, Mesa nova) {
+        Mesa[] maior = new Mesa[originais.length + 1];
+        for (int i = 0; i < originais.length; i++) {
+            maior[i] = originais[i];
+        }
+        maior[maior.length - 1] = nova;
+        return maior;
+    }
+
+    /**
+     * Grava (id;lugares) no ficheiro. Não grava 'ocupada'.
      */
     public void gravarMesas(Mesa[] mesas) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminhoCompletoMesas))) {
             for (Mesa mesa : mesas) {
-                // Formato "id;lugares"
                 String linha = mesa.getId() + ";" + mesa.getLugares();
                 bw.write(linha);
                 bw.newLine();
             }
-            System.out.println("Mesas gravadas com sucesso em: " + caminhoCompletoMesas);
+            System.out.println("Mesas guardadas com sucesso em: " + caminhoCompletoMesas);
         } catch (IOException e) {
-            System.out.println("Erro ao gravar no ficheiro de mesas: " + e.getMessage());
+            System.out.println("Erro ao guardar o ficheiro de mesas: " + e.getMessage());
         }
     }
 
     /**
-     * Cria uma nova mesa e devolve um array com +1 elemento.
+     * Cria uma nova mesa em memória e devolve um array com mais 1 elemento.
      */
     public Mesa[] criarMesa(Mesa[] mesas, int id, int lugares, boolean ocupada) {
-        Mesa[] novasMesas = new Mesa[mesas.length + 1];
-        // copiar manualmente
+        Mesa[] novas = new Mesa[mesas.length + 1];
         for (int i = 0; i < mesas.length; i++) {
-            novasMesas[i] = mesas[i];
+            novas[i] = mesas[i];
         }
-        // colocar a nova mesa na última posição
-        novasMesas[novasMesas.length - 1] = new Mesa(id, ocupada, lugares);
-
+        novas[novas.length - 1] = new Mesa(id, ocupada, lugares);
         System.out.println("Mesa " + id + " criada em memória.");
-        return novasMesas;
+        return novas;
     }
 
     /**
-     * Lista no ecrã as mesas do array.
+     * Lista no ecrã as mesas (mostrando ID, lugares e se está ocupada).
      */
     public void exibirMesas(Mesa[] mesas) {
         if (mesas == null || mesas.length == 0) {
-            System.out.println("Não há mesas registadas.");
+            System.out.println("Não há mesas registadas em memória.");
             return;
         }
         System.out.println("\n==== Lista de Mesas ====");
         for (Mesa m : mesas) {
+            if (m == null) continue;
             System.out.println("ID: " + m.getId()
                     + ", Lugares: " + m.getLugares()
                     + ", Ocupada: " + (m.isOcupada() ? "Sim" : "Não"));
@@ -139,7 +197,7 @@ public class ControllerMesa {
     }
 
     /**
-     * Atualiza (edita) a mesa correspondente a 'idMesa', caso seja encontrada.
+     * Atualiza (em memória) a mesa que corresponda ao ID, se encontrada.
      */
     public void atualizarMesa(Mesa[] mesas, int idMesa, int novosLugares, boolean novaOcupacao) {
         Mesa mesa = encontrarMesaPorId(mesas, idMesa);
@@ -153,7 +211,7 @@ public class ControllerMesa {
     }
 
     /**
-     * Remove (elimina) a mesa com 'idMesa' do array, devolvendo um novo array com -1 elemento.
+     * Elimina a mesa do array (se encontrada) e devolve um array menor.
      */
     public Mesa[] eliminarMesa(Mesa[] mesas, int idMesa) {
         int index = -1;
@@ -165,24 +223,21 @@ public class ControllerMesa {
         }
         if (index == -1) {
             System.out.println("Mesa " + idMesa + " não encontrada.");
-            return mesas; // não modifica o array
+            return mesas;
         }
-
-        Mesa[] mesasAtualizadas = new Mesa[mesas.length - 1];
-        // Copiar a parte antes do index
-        for (int i = 0; i < index; i++) {
-            mesasAtualizadas[i] = mesas[i];
-        }
-        // Copiar a parte depois do index
-        for (int i = index + 1; i < mesas.length; i++) {
-            mesasAtualizadas[i - 1] = mesas[i];
+        Mesa[] atualizadas = new Mesa[mesas.length - 1];
+        for (int i = 0, j = 0; i < mesas.length; i++) {
+            if (i != index) {
+                atualizadas[j] = mesas[i];
+                j++;
+            }
         }
         System.out.println("Mesa " + idMesa + " eliminada em memória.");
-        return mesasAtualizadas;
+        return atualizadas;
     }
 
     /**
-     * Método auxiliar para encontrar mesa por ID.
+     * Procura uma mesa no array, pelo ID.
      */
     private Mesa encontrarMesaPorId(Mesa[] mesas, int idMesa) {
         for (Mesa m : mesas) {

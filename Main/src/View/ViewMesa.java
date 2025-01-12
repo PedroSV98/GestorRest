@@ -34,8 +34,8 @@ public class ViewMesa {
 
             switch (opcao) {
                 case 0:
-                    // Ler do ficheiro e exibir
-                    mesas = controller.carregarMesas();
+                    // Junta com o ficheiro, não perdendo o estado de ocupada
+                    mesas = controller.agruparComFicheiro(mesas);
                     controller.exibirMesas(mesas);
                     break;
 
