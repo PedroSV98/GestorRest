@@ -8,11 +8,12 @@ import java.io.IOException;
 public class ConfiguracoesController {
 
     private Configuracoes modelo;
+    private static ConfiguracoesController controller;
 
     // Aqui definimos o caminho completo do config.txt (ajusta se necessário)
     private final String CAMINHO_FICHEIRO = "C:\\Users\\Acer\\Desktop\\LP1\\GestorRest\\Main\\src\\data\\config.txt";
 
-    public ConfiguracoesController() {
+    private ConfiguracoesController() {
         // Instancia o modelo com o caminho do ficheiro
         modelo = new Configuracoes(CAMINHO_FICHEIRO);
 
@@ -22,6 +23,15 @@ public class ConfiguracoesController {
         } catch (IOException e) {
             System.out.println("Erro ao carregar configurações: " + e.getMessage());
         }
+    }
+
+    public static ConfiguracoesController getInstancia(){
+        // padrão singleton aplicado
+        if(controller == null)
+            controller = new ConfiguracoesController();
+
+        return controller;
+
     }
 
     // Método para retornar o objeto modelo (para a View exibir)
@@ -50,9 +60,6 @@ public class ConfiguracoesController {
         modelo.setCustoClienteNaoAtendido(valor);
     }
 
-    public void atualizarPassword(String valor) {
-        modelo.setPassword(valor);
-    }
 
     // Guardar no ficheiro
     public void guardar() {
