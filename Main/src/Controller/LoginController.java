@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.Configuracoes;
 import Model.LoginModel;
 import View.ConfiguracoesView;
 import View.LoginView;
@@ -18,15 +19,15 @@ public class LoginController {
         this.view = view;
     }
 
-    public void iniciarLogin() {
+    public void iniciarLogin(Configuracoes model) {
         boolean senhaCorretaInformada = false;
         while (!senhaCorretaInformada) {
-            try {
-                Model.getConfiguracoes().carregarConfiguracoes(); // Carregar as configurações sempre que iniciar o login
+            /*try {
+                //Model.getConfiguracoes().carregarConfiguracoes(); // Carregar as configurações sempre que iniciar o login
             } catch (IOException e) {
                 view.exibirMensagem("Erro ao carregar configurações.");
                 return;
-            }
+            }*/
            String senha = view.inserirSenha();
 
             if (senha.equals("0")) {
@@ -36,11 +37,12 @@ public class LoginController {
                 break;
             }
 
-            if (Model.validarSenha(senha)) {
+            if (model.getPassword().equals(senha)) {
+                //if (Model.validarSenha(senha)) {
                 view.exibirMensagem("Acesso concedido!");
                 senhaCorretaInformada = true;
 
-                ConfiguracoesController configuracoesController = new ConfiguracoesController();
+                ConfiguracoesController configuracoesController = ConfiguracoesController.getInstancia();
                 LoginView loginView = new LoginView();
                 LoginModel loginModel = new LoginModel(configuracoesController.getModelo());
                 LoginController loginController = new LoginController(loginModel, loginView);
@@ -83,16 +85,8 @@ public class LoginController {
             }
         } while (!novaSenha.equals(confirmacaoSenha) || novaSenha.isEmpty());
 
-        Model.getConfiguracoes().setPassword(novaSenha);
-
-        // Alterar a senha no controlador
-        try {
-            Model.getConfiguracoes().guardarConfiguracoes();
-            Model.getConfiguracoes().carregarConfiguracoes();
-            view.exibirMensagem("Password alterado com sucesso!");
-        } catch (Exception e) {
-            view.exibirMensagem("As Password's não são iguas!");
-        }
+        Model.getConfiguracoes().setSenhaEmMemoria(novaSenha);
+        view.exibirMensagem("Password alterado com sucesso!");
     }
 }
 

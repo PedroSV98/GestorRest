@@ -1,6 +1,6 @@
 caminhoFicheiros: data/
-separador: /
+separador: ;
 unidadesTempoDia: 24
-tempoEsperaAcao: 5
+tempoEsperaAcao: 100
 custoClienteNaoAtendido: 10.5
-password: PASSWORD
+password: 1
