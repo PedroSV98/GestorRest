@@ -6,72 +6,92 @@ import java.util.Scanner;
 
 public class ViewMesa {
 
-    private ControllerMesa controller;
-    private Scanner scanner;
+    private final ControllerMesa controller;
+    private final Scanner scanner;
+    private Mesa[] mesas; // Array em memória
 
     public ViewMesa(ControllerMesa controller) {
         this.controller = controller;
-        this.scanner = new Scanner(System.in);
+        this.scanner = new Scanner(System.in, "UTF-8"); // Configurar o Scanner para UTF-8
+        this.mesas = new Mesa[0];
     }
 
-    // Método para exibir o menu e interagir com o usuário
     public void exibirMenu() {
-        Mesa[] mesas = controller.carregarMesasDoFicheiro("mesas.txt");
         int opcao = -1;
 
         while (opcao != 5) {
-            // Menu de opções
-            System.out.println("Menu:");
+            System.out.println("\n=== Menu de Mesas ===");
             System.out.println("0 - Ler mesas");
             System.out.println("1 - Criar mesa");
             System.out.println("2 - Editar mesa");
             System.out.println("3 - Apagar mesa");
-            System.out.println("4 - Gravar no arquivo");
+            System.out.println("4 - Gravar no ficheiro");
             System.out.println("5 - Sair");
             System.out.print("Escolha uma opção: ");
             opcao = scanner.nextInt();
+            scanner.nextLine(); // Consumir a quebra de linha
 
             switch (opcao) {
                 case 0:
-                    // Ler e exibir mesas
+                    // Ler do ficheiro apenas se o array estiver vazio
+                    if (mesas == null || mesas.length == 0) {
+                        mesas = controller.carregarMesas();
+                        System.out.println("Mesas carregadas do ficheiro para o array.");
+                    } else {
+                        System.out.println("As mesas já foram carregadas. Alterações estão no array.");
+                    }
+                    // Mostrar o estado atual do array
                     controller.exibirMesas(mesas);
                     break;
+
                 case 1:
-                    // Criar uma nova mesa
-                    System.out.print("Introduza o número da nova mesa: ");
+                    // Criar mesa
+                    System.out.print("ID da nova mesa: ");
                     int idCriar = scanner.nextInt();
-                    System.out.print("Introduza o número de lugares: ");
-                    int lugares = scanner.nextInt();
-                    System.out.print("A mesa estará ocupada? (true/false): ");
-                    boolean ocupada = scanner.nextBoolean();
-                    mesas = controller.criarMesa(mesas, idCriar, lugares, ocupada);
+                    System.out.print("Número de lugares: ");
+                    int lugaresCriar = scanner.nextInt();
+                    System.out.print("Está ocupada? (true/false): ");
+                    boolean ocupadaCriar = scanner.nextBoolean();
+                    scanner.nextLine(); // Consumir quebra de linha
+                    mesas = controller.criarMesa(mesas, idCriar, lugaresCriar, ocupadaCriar);
+                    System.out.println("Mesa criada com sucesso.");
                     break;
+
                 case 2:
-                    // Editar uma mesa
-                    System.out.print("Introduza o número da mesa que deseja editar: ");
+                    // Editar mesa
+                    System.out.print("ID da mesa a editar: ");
                     int idEditar = scanner.nextInt();
-                    System.out.print("Introduza o novo número de lugares: ");
-                    lugares = scanner.nextInt();
-                    System.out.print("A mesa está ocupada? (true/false): ");
-                    ocupada = scanner.nextBoolean();
-                    controller.atualizarMesa(mesas, idEditar, lugares, ocupada);
+                    System.out.print("Novo número de lugares: ");
+                    int lugaresEdit = scanner.nextInt();
+                    System.out.print("Está ocupada? (true/false): ");
+                    boolean ocupadaEdit = scanner.nextBoolean();
+                    scanner.nextLine(); // Consumir quebra de linha
+                    controller.atualizarMesa(mesas, idEditar, lugaresEdit, ocupadaEdit);
+                    System.out.println("Mesa atualizada com sucesso.");
                     break;
+
                 case 3:
-                    // Apagar uma mesa
-                    System.out.print("Introduza o número da mesa que deseja apagar: ");
-                    int idDeletar = scanner.nextInt();
-                    mesas = controller.eliminarMesa(mesas, idDeletar);
+                    // Apagar mesa
+                    System.out.print("ID da mesa a apagar: ");
+                    int idApagar = scanner.nextInt();
+                    scanner.nextLine(); // Consumir quebra de linha
+                    mesas = controller.eliminarMesa(mesas, idApagar);
+                    System.out.println("Mesa apagada com sucesso.");
                     break;
+
                 case 4:
-                    // Gravar as mesas no arquivo
-                    controller.gravarMesasNoFicheiro(mesas, "mesas.txt");
+                    // Gravar no ficheiro
+                    controller.gravarMesas(mesas);
+                    System.out.println("Mesas gravadas no ficheiro com sucesso.");
                     break;
+
                 case 5:
-                    // Sair
-                    System.out.println("Saindo...");
+                    System.out.println("A sair do menu de mesas...");
                     break;
+
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
+                    break;
             }
         }
     }

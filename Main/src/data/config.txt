@@ -1,6 +1,6 @@
-caminhoFicheiros: data/
-separador: ;
+caminhoFicheiros: C:\\Users\\Guts\\Documents\\DocumentosDAS\\1ano\\lp1\\GestorRest\\Main\\src\\data\\
+separador: /
 unidadesTempoDia: 24
-tempoEsperaAcao: 100
+tempoEsperaAcao: 5
 custoClienteNaoAtendido: 10.5
-password: 1
+password: 123

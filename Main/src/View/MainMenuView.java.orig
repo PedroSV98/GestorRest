@@ -2,21 +2,23 @@ package View;
 
 import Controller.ConfiguracoesController;
 import Controller.ControllerMesa;
+import Controller.ControllerPrato;
 <<<<<<< HEAD
+import Controller.LoginController;
+import Model.LoginModel;
+
 
 =======
-import Controller.ControllerPrato;
-
+import java.util.Locale;
 import javax.swing.text.View;
->>>>>>> 6f4dcd279f237c44ee2594c81d97dbf57614b142
+>>>>>>> f19c44d66feb9407a8c3eef10d50dffd84dd0807
 import java.util.Scanner;
 
 public class MainMenuView {
     private ConfiguracoesController configuracoesController;
 
-    private ControllerMesa controlmesa;
     public MainMenuView() {
-        configuracoesController = new ConfiguracoesController();
+        configuracoesController = ConfiguracoesController.getInstancia();
     }
 
     public void exibirMenu() {
@@ -31,38 +33,23 @@ public class MainMenuView {
             System.out.println("4. Consultar Estatísticas");
             System.out.println("5. Configurações");
             System.out.println("6. Sair");
+            System.out.println("Password atual: " + configuracoesController.getModelo().getPassword());
             System.out.print("Escolha uma opção: ");
 
             int opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir quebra de linha
+            scanner.nextLine(); //
 
             switch (opcao) {
                 case 1:
-<<<<<<< HEAD
-                    System.out.println("1 - Gestão Mesas");
-                    System.out.println("2 - Gestão Menu");
-                    System.out.println("3 - Voltar Menu Anterior");
-                    int opcaomm =scanner.nextInt();
-                    switch(opcaomm){
-                        case 1:
-                            ViewMesa viewMesa = new ViewMesa();
-                            viewMesa.exibirMenuMesas();
-                            break;
-                        case 2:
-                            
-                        case 3:
-                            break;
-
-                    }
-
-
-=======
-                    ViewMesa viewMesa = new ViewMesa(new ControllerMesa());
+                    // Passa o mesmo configuracoesController, para o ControllerMesa saber o caminho
+                    ControllerMesa controllerMesa = new ControllerMesa(configuracoesController);
+                    ViewMesa viewMesa = new ViewMesa(controllerMesa);
                     viewMesa.exibirMenu();
->>>>>>> 6f4dcd279f237c44ee2594c81d97dbf57614b142
                     break;
+
                 case 2:
-                    ViewPrato viewPrato = new ViewPrato(new ControllerPrato());
+                    ControllerPrato controllerPrato = new ControllerPrato(configuracoesController);
+                    ViewPrato viewPrato = new ViewPrato(controllerPrato);
                     viewPrato.exibirMenu();
                     break;
                 case 3:
@@ -72,15 +59,24 @@ public class MainMenuView {
                     System.out.println("Opção de consultar estatísticas ainda não implementada.");
                     break;
                 case 5:
-                    ConfiguracoesView configuracoesView = new ConfiguracoesView(configuracoesController);
-                    configuracoesView.exibirMenu();
+                    LoginView loginView = new LoginView();
+                    LoginModel loginModel = new LoginModel(configuracoesController.getModelo());// Criação da view de login
+                    LoginController loginController = new LoginController(loginModel, loginView);  // Criação do controller de login
+                    loginController.iniciarLogin(configuracoesController.getModelo());  // Chama o método de autenticação
                     break;
                 case 6:
-                    System.out.println("Encerrando aplicação...");
-                    running = false;
+                    System.out.println("Tem a Certeza Que Quer Sair? (S/N)");
+                    String resposta = scanner.nextLine();
+                    if (resposta.equalsIgnoreCase("S")) {
+                        System.out.println("Encerrando a Aplicação...");
+                        configuracoesController.guardar();
+                        running = false;
+                    } else {
+                        System.out.println("Operação Cancelada.");
+                    }
                     break;
                 default:
-                    System.out.println("Opção inválida. Tente novamente.");
+                    System.out.println("Opção inválida. Tente Novamente.");
             }
         }
 
@@ -88,6 +84,7 @@ public class MainMenuView {
     }
 
     public static void main(String[] args) {
+        Locale.setDefault(new Locale("pt", "PT"));
         MainMenuView menu = new MainMenuView();
         menu.exibirMenu();
     }

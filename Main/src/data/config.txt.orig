@@ -1,0 +1,15 @@
+<<<<<<< HEAD
+caminhoFicheiros: data/
+separador: ;
+=======
+caminhoFicheiros: C:\\Users\\Guts\\Documents\\DocumentosDAS\\1ano\\lp1\\GestorRest\\Main\\src\\data\\
+separador: /
+>>>>>>> f19c44d66feb9407a8c3eef10d50dffd84dd0807
+unidadesTempoDia: 24
+tempoEsperaAcao: 100
+custoClienteNaoAtendido: 10.5
+<<<<<<< HEAD
+password: 1
+=======
+password: 123
+>>>>>>> f19c44d66feb9407a8c3eef10d50dffd84dd0807
