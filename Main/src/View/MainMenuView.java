@@ -7,6 +7,7 @@ import Controller.LoginController;
 import Model.LoginModel;
 
 
+
 import java.util.Scanner;
 
 public class MainMenuView {
@@ -36,13 +37,17 @@ public class MainMenuView {
 
             switch (opcao) {
                 case 1:
-                    ViewMesa viewMesa = new ViewMesa(new ControllerMesa());
+                    // Passa o mesmo configuracoesController, para o ControllerMesa saber o caminho
+                    ControllerMesa controllerMesa = new ControllerMesa(configuracoesController);
+                    ViewMesa viewMesa = new ViewMesa(controllerMesa);
                     viewMesa.exibirMenu();
                     break;
                 case 2:
-                    ViewPrato viewPrato = new ViewPrato(new ControllerPrato());
+                    ControllerPrato controllerPrato = new ControllerPrato(configuracoesController);
+                    ViewPrato viewPrato = new ViewPrato(controllerPrato);
                     viewPrato.exibirMenu();
                     break;
+
                 case 3:
                     System.out.println("Opção de gerir dia-a-dia ainda não implementada.");
                     break;
