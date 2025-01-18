@@ -34,7 +34,7 @@ public class Configuracoes {
 
         while ((linha = leitor.readLine()) != null) {
             // Exemplo de linha: "caminhoFicheiros: data/"
-            String[] partes = linha.split(":");
+            String[] partes = linha.split(":", 2);
             // Verifica se a linha tem, pelo menos, 2 partes (chave e valor).
             if (partes.length == 2) {
                 String chave = partes[0].trim();   // Ex: "caminhoFicheiros"

@@ -1,4 +1,4 @@
-caminhoFicheiros: data/
+caminhoFicheiros: C:/Users/Guts/DocumentDAS/1ano/lp1
 separador: ;
 unidadesTempoDia: 24
 tempoEsperaAcao: 100
