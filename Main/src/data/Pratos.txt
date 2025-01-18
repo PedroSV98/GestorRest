@@ -1,4 +1,4 @@
-P�o de alho;Entrada;1.4;3.0;1;1;true
+Pão de alho;Entradas;2.99;3.99;3;4;true
 Bacalhau com natas;Principal;3.4;9.99;3;2;true
 Francesinha de frango;Principal;4.5;11.0;2;2;false
 Francesinha de porco com ovo;Principal;5.9;12.5;2;2;true

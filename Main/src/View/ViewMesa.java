@@ -1,6 +1,5 @@
 package View;
 
-import Controller.ConfiguracoesController;
 import Controller.ControllerMesa;
 import Model.Mesa;
 import java.util.Scanner;
@@ -13,7 +12,7 @@ public class ViewMesa {
 
     public ViewMesa(ControllerMesa controller) {
         this.controller = controller;
-        this.scanner = new Scanner(System.in);
+        this.scanner = new Scanner(System.in, "UTF-8"); // Configurar o Scanner para UTF-8
         this.mesas = new Mesa[0];
     }
 
@@ -34,8 +33,14 @@ public class ViewMesa {
 
             switch (opcao) {
                 case 0:
-                    // Junta com o ficheiro, não perdendo o estado de ocupada
-                    mesas = controller.agruparComFicheiroMesa(mesas);
+                    // Ler do ficheiro apenas se o array estiver vazio
+                    if (mesas == null || mesas.length == 0) {
+                        mesas = controller.carregarMesas();
+                        System.out.println("Mesas carregadas do ficheiro para o array.");
+                    } else {
+                        System.out.println("As mesas já foram carregadas. Alterações estão no array.");
+                    }
+                    // Mostrar o estado atual do array
                     controller.exibirMesas(mesas);
                     break;
 
@@ -47,7 +52,9 @@ public class ViewMesa {
                     int lugaresCriar = scanner.nextInt();
                     System.out.print("Está ocupada? (true/false): ");
                     boolean ocupadaCriar = scanner.nextBoolean();
+                    scanner.nextLine(); // Consumir quebra de linha
                     mesas = controller.criarMesa(mesas, idCriar, lugaresCriar, ocupadaCriar);
+                    System.out.println("Mesa criada com sucesso.");
                     break;
 
                 case 2:
@@ -58,19 +65,24 @@ public class ViewMesa {
                     int lugaresEdit = scanner.nextInt();
                     System.out.print("Está ocupada? (true/false): ");
                     boolean ocupadaEdit = scanner.nextBoolean();
+                    scanner.nextLine(); // Consumir quebra de linha
                     controller.atualizarMesa(mesas, idEditar, lugaresEdit, ocupadaEdit);
+                    System.out.println("Mesa atualizada com sucesso.");
                     break;
 
                 case 3:
                     // Apagar mesa
                     System.out.print("ID da mesa a apagar: ");
                     int idApagar = scanner.nextInt();
+                    scanner.nextLine(); // Consumir quebra de linha
                     mesas = controller.eliminarMesa(mesas, idApagar);
+                    System.out.println("Mesa apagada com sucesso.");
                     break;
 
                 case 4:
                     // Gravar no ficheiro
                     controller.gravarMesas(mesas);
+                    System.out.println("Mesas gravadas no ficheiro com sucesso.");
                     break;
 
                 case 5:

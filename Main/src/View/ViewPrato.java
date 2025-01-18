@@ -12,7 +12,7 @@ public class ViewPrato {
 
     public ViewPrato(ControllerPrato controller) {
         this.controller = controller;
-        this.scanner = new Scanner(System.in);
+        this.scanner = new Scanner(System.in, "UTF-8"); // Configurar o Scanner para UTF-8
         this.pratos = new Prato[0]; // Inicialmente vazio
     }
 
@@ -33,15 +33,21 @@ public class ViewPrato {
 
             switch (opcao) {
                 case 0:
-                    // Agrupar pratos do ficheiro com os da memória
+                    // Agrupar pratos do ficheiro
                     this.pratos = controller.AgruparComFicheiro(this.pratos);
+                    System.out.println("Pratos carregados e mesclados com sucesso.");
                     controller.exibirPratos(this.pratos);
                     break;
 
                 case 1:
-                    // Criar novo prato
+                    // Criar prato
                     System.out.print("Introduza o nome do prato: ");
                     String nomeCriar = scanner.nextLine();
+                    if (controller.encontrarPratoPorNome(this.pratos, nomeCriar) != null) {
+                        System.out.println("Erro: Já existe um prato com esse nome.");
+                        break;
+                    }
+
                     System.out.print("Introduza a categoria do prato: ");
                     String categoria = scanner.nextLine();
                     System.out.print("Introduza o preço de custo (ex: 1.4): ");
@@ -55,14 +61,21 @@ public class ViewPrato {
                     System.out.print("O prato está disponível? (true/false): ");
                     boolean estado = scanner.nextBoolean();
                     scanner.nextLine(); // Consumir quebra de linha
+
                     this.pratos = controller.criarPrato(pratos, nomeCriar, categoria, PC, PV, tempPrep, tempCons, estado);
                     System.out.println("Prato criado em memória.");
+                    controller.exibirPratos(this.pratos);
                     break;
 
                 case 2:
-                    // Editar prato existente
+                    // Editar prato
                     System.out.print("Introduza o nome do prato que deseja editar: ");
                     String nomeEditar = scanner.nextLine();
+                    if (controller.encontrarPratoPorNome(this.pratos, nomeEditar) == null) {
+                        System.out.println("Erro: Não existe nenhum prato com esse nome.");
+                        break;
+                    }
+
                     System.out.print("Introduza a nova categoria: ");
                     String novaCategoria = scanner.nextLine();
                     System.out.print("Introduza o novo preço de custo (ex: 1.4): ");
@@ -76,8 +89,10 @@ public class ViewPrato {
                     System.out.print("O prato estará disponível? (true/false): ");
                     boolean novoEstado = scanner.nextBoolean();
                     scanner.nextLine(); // Consumir quebra de linha
+
                     controller.atualizarPrato(pratos, nomeEditar, novaCategoria, novoPC, novoPV, novoTempPrep, novoTempCons, novoEstado);
                     System.out.println("Prato atualizado em memória.");
+                    controller.exibirPratos(this.pratos);
                     break;
 
                 case 3:
@@ -86,15 +101,16 @@ public class ViewPrato {
                     String nomeEliminar = scanner.nextLine();
                     this.pratos = controller.eliminarPrato(this.pratos, nomeEliminar);
                     System.out.println("Prato eliminado.");
+                    controller.exibirPratos(this.pratos);
                     break;
 
                 case 4:
                     // Gravar no ficheiro
                     controller.gravarPratos(this.pratos);
+                    System.out.println("Pratos gravados com sucesso no ficheiro.");
                     break;
 
                 case 5:
-                    // Sair
                     System.out.println("A sair...");
                     break;
 
@@ -102,5 +118,6 @@ public class ViewPrato {
                     System.out.println("Opção inválida. Tente novamente.");
             }
         }
-    }}
+    }
+}
 

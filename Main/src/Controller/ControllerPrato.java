@@ -293,7 +293,7 @@ public class ControllerPrato {
         return atualizados;
     }
 
-    private Prato encontrarPratoPorNome(Prato[] pratos, String nome) {
+    public Prato encontrarPratoPorNome(Prato[] pratos, String nome) {
         for (Prato p : pratos) {
             if (p.getNome().equalsIgnoreCase(nome)) {
                 return p;

@@ -3,4 +3,4 @@ separador: /
 unidadesTempoDia: 24
 tempoEsperaAcao: 5
 custoClienteNaoAtendido: 10.5
-password: admin123
+password: 123
