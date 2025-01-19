@@ -1,4 +1,4 @@
-caminhoFicheiros: C:/Users/Guts/DocumentDAS/1ano/lp1
+caminhoFicheiros: C:\Users\Acer\Desktop\LP1\GestorRest\Main\src\data
 separador: ;
 unidadesTempoDia: 24
 tempoEsperaAcao: 100

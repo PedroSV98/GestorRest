@@ -3,7 +3,11 @@ package Controller;
 import Model.Configuracoes;
 import View.ConfiguracoesView;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class ConfiguracoesController {
 
@@ -70,5 +74,36 @@ public class ConfiguracoesController {
             System.out.println("Erro ao guardar configurações: " + e.getMessage());
         }
     }
+    public String identificarSeparador(String caminhoFicheiro) {
+        String[] separadoresComuns = {";", ":", "/", "-", "_"};
+        int[] contadores = new int[separadoresComuns.length];
+
+        try (BufferedReader br = new BufferedReader(new FileReader(caminhoFicheiro))) {
+            String linha;
+            int linhasAnalisadas = 0;
+
+            while ((linha = br.readLine()) != null && linhasAnalisadas < 10) { // Analisa até 10 linhas
+                for (int i = 0; i < separadoresComuns.length; i++) {
+                    contadores[i] += linha.split(separadoresComuns[i], -1).length - 1; // Conta ocorrências do separador
+                }
+                linhasAnalisadas++;
+            }
+
+            // Identifica o separador com mais ocorrências
+            int maxIndex = 0;
+            for (int i = 1; i < contadores.length; i++) {
+                if (contadores[i] > contadores[maxIndex]) {
+                    maxIndex = i;
+                }
+            }
+
+            return contadores[maxIndex] > 0 ? separadoresComuns[maxIndex] : null; // Retorna o separador mais frequente
+        } catch (Exception e) {
+            System.out.println("Erro ao identificar o separador: " + e.getMessage());
+            return null;
+        }
+    }
+
+
 }
 
