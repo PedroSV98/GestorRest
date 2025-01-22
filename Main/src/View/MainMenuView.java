@@ -5,16 +5,15 @@ import Controller.ControllerMesa;
 import Controller.ControllerPrato;
 import Controller.LoginController;
 import Model.LoginModel;
-import View.LoginView;
 
-import javax.swing.text.View;
+
 import java.util.Scanner;
 
 public class MainMenuView {
     private ConfiguracoesController configuracoesController;
 
     public MainMenuView() {
-        configuracoesController = new ConfiguracoesController();
+        configuracoesController = ConfiguracoesController.getInstancia();
     }
 
     public void exibirMenu() {
@@ -29,6 +28,7 @@ public class MainMenuView {
             System.out.println("4. Consultar Estatísticas");
             System.out.println("5. Configurações");
             System.out.println("6. Sair");
+            System.out.println("Password atual: " + configuracoesController.getModelo().getPassword());
             System.out.print("Escolha uma opção: ");
 
             int opcao = scanner.nextInt();
@@ -53,14 +53,21 @@ public class MainMenuView {
                     LoginView loginView = new LoginView();
                     LoginModel loginModel = new LoginModel(configuracoesController.getModelo());// Criação da view de login
                     LoginController loginController = new LoginController(loginModel, loginView);  // Criação do controller de login
-                    loginController.iniciarLogin();  // Chama o método de autenticação
+                    loginController.iniciarLogin(configuracoesController.getModelo());  // Chama o método de autenticação
                     break;
                 case 6:
-                    System.out.println("Encerrando aplicação...");
-                    running = false;
+                    System.out.println("Tem a Certeza Que Quer Sair? (S/N)");
+                    String resposta = scanner.nextLine();
+                    if (resposta.equalsIgnoreCase("S")) {
+                        System.out.println("Encerrando a Aplicação...");
+                        configuracoesController.guardar();
+                        running = false;
+                    } else {
+                        System.out.println("Operação Cancelada.");
+                    }
                     break;
                 default:
-                    System.out.println("Opção inválida. Tente novamente.");
+                    System.out.println("Opção inválida. Tente Novamente.");
             }
         }
 

@@ -14,12 +14,15 @@ public class Configuracoes {
     private int tempoEsperaAcao;
     private double custoClienteNaoAtendido;
     private String password;
+    private String senhaEmMemoria;
 
     // Caminho absoluto do ficheiro de configurações
     private final String caminhoFicheiro;
 
     public Configuracoes(String caminhoFicheiro) {
+
         this.caminhoFicheiro = caminhoFicheiro;
+        this.senhaEmMemoria = null;
     }
 
     /**
@@ -31,7 +34,7 @@ public class Configuracoes {
 
         while ((linha = leitor.readLine()) != null) {
             // Exemplo de linha: "caminhoFicheiros: data/"
-            String[] partes = linha.split(":");
+            String[] partes = linha.split(":", 2);
             // Verifica se a linha tem, pelo menos, 2 partes (chave e valor).
             if (partes.length == 2) {
                 String chave = partes[0].trim();   // Ex: "caminhoFicheiros"
@@ -56,6 +59,7 @@ public class Configuracoes {
                         break;
                     case "password":
                         this.password = valor;
+                        this.senhaEmMemoria = valor;
                         break;
                     default:
                         // Caso exista alguma chave desconhecida
@@ -129,10 +133,24 @@ public class Configuracoes {
     }
 
     public String getPassword() {
-        return password;
+        return senhaEmMemoria != null ? senhaEmMemoria : password;
     }
 
     public void setPassword(String password) {
+
         this.password = password;
+        this.senhaEmMemoria = senhaEmMemoria;
+    }
+
+    public String getSenhaEmMemoria() {
+        return senhaEmMemoria;
+    }
+
+    public void setSenhaEmMemoria(String senhaEmMemoria) {
+        this.senhaEmMemoria = senhaEmMemoria;
+    }
+
+    public String getCaminhoFicheiro() {
+        return caminhoFicheiro;
     }
 }

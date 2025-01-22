@@ -12,7 +12,7 @@ public class LoginModel {
     }
 
     public void alterarSenha(String novaSenha) {
-        configuracoes.setPassword(novaSenha);
+        configuracoes.setSenhaEmMemoria(novaSenha);
     }
 
     public Configuracoes getConfiguracoes() {
