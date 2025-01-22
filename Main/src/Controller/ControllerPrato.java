@@ -22,6 +22,8 @@ public class ControllerPrato {
      * Formato: nome;categoria;PC;PV;tempPrep;tempCons;estado
      */
     public Prato[] carregarPratos() {
+        String separador = configController.getModelo().getSeparador();
+
         int numLinhasValidas = 0;
         // 1) Contagem
         try (BufferedReader br = new BufferedReader(
@@ -34,7 +36,7 @@ public class ControllerPrato {
             while ((linha = br.readLine()) != null) {
                 linha = linha.trim();
                 if (!linha.isEmpty()) {
-                    String[] partes = linha.split(";");
+                    String[] partes = linha.split(separador);
                     if (partes.length >= 7) {
                         numLinhasValidas++;
                     }
@@ -60,7 +62,7 @@ public class ControllerPrato {
                 if (linha.isEmpty()) {
                     continue;
                 }
-                String[] dados = linha.split(";");
+                String[] dados = linha.split(separador);
                 if (dados.length < 7) {
                     System.out.println("Linha inválida (esperava 7 colunas): " + linha);
                     continue;
@@ -184,6 +186,8 @@ public class ControllerPrato {
     }
 
     public void gravarPratos(Prato[] pratos) {
+        String separador = configController.getModelo().getSeparador();
+
         try (BufferedWriter bw = new BufferedWriter(
                 new OutputStreamWriter(
                         new FileOutputStream(caminhoCompletoPratos),
@@ -191,12 +195,12 @@ public class ControllerPrato {
                 )
         )) {
             for (Prato p : pratos) {
-                String linha = p.getNome() + ";"
-                        + p.getCategoria() + ";"
-                        + p.getPC() + ";"
-                        + p.getPV() + ";"
-                        + p.getTempPrep() + ";"
-                        + p.getTempCons() + ";"
+                String linha = p.getNome() + separador
+                        + p.getCategoria() + separador
+                        + p.getPC() + separador
+                        + p.getPV() + separador
+                        + p.getTempPrep() + separador
+                        + p.getTempCons() + separador
                         + p.isEstado();
 
                 bw.write(linha);
