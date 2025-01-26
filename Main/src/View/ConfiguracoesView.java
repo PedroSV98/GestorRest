@@ -109,8 +109,8 @@ public class ConfiguracoesView {
                 scanner.nextLine();
                 break;
             case "6":
-                LoginModel loginModel = new LoginModel(controller.getModelo()); // Passando o modelo corretamente
-                LoginView loginView = new LoginView(); // Criando a view de login
+                LoginModel loginModel = new LoginModel(controller.getModelo()); // Passa o modelo corretamente
+                LoginView loginView = new LoginView(); // Cria a view de login
                 LoginController loginController = new LoginController(loginModel, loginView);
                 loginController.alterarSenha(scanner);
                 break;

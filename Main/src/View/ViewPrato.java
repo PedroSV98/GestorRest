@@ -33,11 +33,16 @@ public class ViewPrato {
 
             switch (opcao) {
                 case 0:
-                    // Agrupar pratos do ficheiro
-                    this.pratos = controller.AgruparComFicheiro(this.pratos);
-                    System.out.println("Pratos carregados e mesclados com sucesso.");
-                    controller.exibirPratos(this.pratos);
-                    break;
+                // Ler do ficheiro apenas se o array estiver vazio
+                if (pratos == null || pratos.length == 0) {
+                    pratos = controller.carregarPratos();
+                    System.out.println("Mesas carregadas do ficheiro para o array.");
+                } else {
+                    System.out.println("As mesas já foram carregadas. Alterações estão no array.");
+                }
+                // Mostrar o estado atual do array
+                controller.exibirPratos(pratos);
+                break;
 
                 case 1:
                     // Criar prato
