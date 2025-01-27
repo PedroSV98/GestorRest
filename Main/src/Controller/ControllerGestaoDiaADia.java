@@ -64,6 +64,7 @@ public class ControllerGestaoDiaADia {
         Reserva[] reservasAtuais = getReservasNoTempoAtual(); // Busca as reservas no tempo atual
         boolean clienteEncontrado = false;
 
+        // Verifica se o cliente está nas reservas
         for (Reserva reserva : reservasAtuais) {
             if (reserva.getNomeReserva().trim().equalsIgnoreCase(cliente.trim())) {
                 clienteEncontrado = true;
@@ -114,10 +115,56 @@ public class ControllerGestaoDiaADia {
             }
         }
 
+        // Lidar com clientes espontâneos
         if (!clienteEncontrado) {
-            System.out.println("Cliente não encontrado nas reservas do tempo atual.");
+            System.out.println("Cliente não encontrado nas reservas. É um cliente espontâneo? (S/N): ");
+            Scanner scanner = new Scanner(System.in);
+            String resposta = scanner.nextLine();
+
+            if (resposta.equalsIgnoreCase("S")) {
+                // Exibir mesas disponíveis para escolha manual
+                System.out.println("\n=== Mesas Disponíveis ===");
+                for (Mesa mesa : controllerMesa.getMesas()) {
+                    System.out.println("Mesa ID: " + mesa.getId() +
+                            ", Capacidade: " + mesa.getLugares() +
+                            ", Ocupada: " + (mesa.isOcupada() ? "Sim" : "Não"));
+                }
+
+                // Solicitar ID da mesa
+                System.out.print("Digite o ID da mesa para o cliente " + cliente + ": ");
+                int mesaId = scanner.nextInt();
+                scanner.nextLine(); // Consumir quebra de linha
+
+                // Validar a mesa
+                Mesa mesaEscolhida = controllerMesa.encontrarMesaPorId(mesaId);
+                if (mesaEscolhida == null) {
+                    System.out.println("ID de mesa inválido.");
+                    return;
+                }
+
+                if (mesaEscolhida.isOcupada()) {
+                    System.out.println("A mesa " + mesaId + " já está ocupada.");
+                    return;
+                }
+
+                if (mesaEscolhida.getLugares() < quantidadePessoas) {
+                    System.out.println("A mesa " + mesaId + " não tem capacidade suficiente.");
+                    return;
+                }
+
+                // Criar e alocar o pedido
+                Pedido novoPedido = new Pedido(cliente, quantidadePessoas, getUnidadesTempoAtual());
+                novoPedido.setMesaId(mesaEscolhida.getId());
+                controllerPedido.adicionarPedido(novoPedido);
+                mesaEscolhida.setOcupada(true); // Marca a mesa como ocupada
+
+                System.out.println("Cliente espontâneo " + cliente + " foi encaminhado para a mesa " + mesaEscolhida.getId());
+            } else {
+                System.out.println("Encaminhamento cancelado.");
+            }
         }
     }
+
 
     private void atualizarConsumos() {
         for (Pedido pedido : controllerPedido.getPedidos()) {
