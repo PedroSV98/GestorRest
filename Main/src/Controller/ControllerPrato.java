@@ -4,6 +4,7 @@ import Model.Configuracoes;
 import Model.Prato;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class ControllerPrato {
 
@@ -16,14 +17,9 @@ public class ControllerPrato {
         this.caminhoCompletoPratos = basePath + "Pratos.txt";
     }
 
-    /**
-     * Lê completamente o ficheiro "Pratos.txt" (UTF-8) em duas passagens
-     * e cria um array novo, sobrescrevendo tudo que estava em memória.
-     * Formato: nome;categoria;PC;PV;tempPrep;tempCons;estado
-     */
+    // Carrega todos os pratos do ficheiro
     public Prato[] carregarPratos() {
         int numLinhasValidas = 0;
-        // 1) Contagem
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream(caminhoCompletoPratos),
@@ -33,11 +29,8 @@ public class ControllerPrato {
             String linha;
             while ((linha = br.readLine()) != null) {
                 linha = linha.trim();
-                if (!linha.isEmpty()) {
-                    String[] partes = linha.split(";");
-                    if (partes.length >= 7) {
-                        numLinhasValidas++;
-                    }
+                if (!linha.isEmpty() && linha.split(";").length >= 7) {
+                    numLinhasValidas++;
                 }
             }
         } catch (IOException e) {
@@ -45,7 +38,6 @@ public class ControllerPrato {
             return new Prato[0];
         }
 
-        // 2) Criar array e preencher
         Prato[] pratos = new Prato[numLinhasValidas];
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(
@@ -57,28 +49,20 @@ public class ControllerPrato {
             int idx = 0;
             while ((linha = br.readLine()) != null) {
                 linha = linha.trim();
-                if (linha.isEmpty()) {
-                    continue;
-                }
+                if (linha.isEmpty()) continue;
+
                 String[] dados = linha.split(";");
-                if (dados.length < 7) {
-                    System.out.println("Linha inválida (esperava 7 colunas): " + linha);
-                    continue;
-                }
+                if (dados.length < 7) continue;
 
-                String nome      = dados[0];
+                String nome = dados[0];
                 String categoria = dados[1];
-                double PC        = Double.parseDouble(dados[2]);
-                double PV        = Double.parseDouble(dados[3]);
-                int tempPrep     = Integer.parseInt(dados[4]);
-                int tempCons     = Integer.parseInt(dados[5]);
-                boolean estado   = Boolean.parseBoolean(dados[6]);
+                double PC = Double.parseDouble(dados[2]);
+                double PV = Double.parseDouble(dados[3]);
+                int tempPrep = Integer.parseInt(dados[4]);
+                int tempCons = Integer.parseInt(dados[5]);
+                boolean estado = Boolean.parseBoolean(dados[6]);
 
-                Prato novoPrato = new Prato(nome, categoria, PC, PV, tempPrep, tempCons, estado);
-                if (idx < pratos.length) {
-                    pratos[idx] = novoPrato;
-                    idx++;
-                }
+                pratos[idx++] = new Prato(nome, categoria, PC, PV, tempPrep, tempCons, estado);
             }
         } catch (IOException e) {
             System.out.println("Erro ao ler o ficheiro de pratos (preenchimento): " + e.getMessage());
@@ -88,217 +72,173 @@ public class ControllerPrato {
         return pratos;
     }
 
-    /**
-     * Faz uma mesclagem ("agrupar") entre o array emMemoria e o ficheiro "Pratos.txt" (UTF-8).
-     * - Se o prato (pelo 'nome') já existe em emMemoria, atualiza apenas
-     *   categoria, PC, PV, tempPrep, tempCons, mas MANTÉM o estado que estava em memória.
-     * - Se o prato NÃO existe, cria um novo prato com os dados do ficheiro (incluindo estado do ficheiro).
-     */
-    public Prato[] AgruparComFicheiro(Prato[] emMemoria) {
-        Prato[] pratosDoFicheiro = carregarPratos(); // Carrega do ficheiro
-        if (pratosDoFicheiro.length == 0) {
-            System.out.println("O ficheiro está vazio ou não foi encontrado.");
-            return emMemoria; // Mantém o estado atual
-        }
-
-        for (Prato pratoFicheiro : pratosDoFicheiro) {
-            boolean existe = false;
-
-            // Verifica se o prato já existe em memória
-            for (Prato pratoMemoria : emMemoria) {
-                if (pratoMemoria.getNome().equalsIgnoreCase(pratoFicheiro.getNome())) {
-                    existe = true;
-                    break;
-                }
-            }
-
-            // Se não existe, adiciona o prato do ficheiro à memória
-            if (!existe) {
-                emMemoria = criarPrato(
-                        emMemoria,
-                        pratoFicheiro.getNome(),
-                        pratoFicheiro.getCategoria(),
-                        pratoFicheiro.getPC(),
-                        pratoFicheiro.getPV(),
-                        pratoFicheiro.getTempPrep(),
-                        pratoFicheiro.getTempCons(),
-                        pratoFicheiro.isEstado()
-                );
-            }
-        }
-        return emMemoria;
-    }
-
-    /**
-     * Lê todas as linhas de um ficheiro (UTF-8) e retorna num array de Strings (sem usar ArrayList).
-     * Fazemos em duas passagens: contar e depois armazenar.
-     */
-    private String[] lerLinhasFicheiroUTF8(String caminho) {
-        // 1) Contar
-        int contagem = 0;
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(
-                        new FileInputStream(caminho),
-                        StandardCharsets.UTF_8
-                )
-        )) {
-            while (br.readLine() != null) {
-                contagem++;
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao contar linhas: " + e.getMessage());
-            return null;
-        }
-
-        // 2) Ler e guardar
-        String[] linhas = new String[contagem];
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(
-                        new FileInputStream(caminho),
-                        StandardCharsets.UTF_8
-                )
-        )) {
-            String linha;
-            int idx = 0;
-            while ((linha = br.readLine()) != null) {
-                linhas[idx++] = linha;
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao ler linhas: " + e.getMessage());
-            return null;
-        }
-
-        return linhas;
-    }
-
-    /**
-     * Adiciona um novo prato a um array, criando um array maior em +1 posição.
-     */
-    private Prato[] adicionarPrato(Prato[] originais, Prato novo) {
-        Prato[] maior = new Prato[originais.length + 1];
-        for (int i = 0; i < originais.length; i++) {
-            maior[i] = originais[i];
-        }
-        maior[maior.length - 1] = novo;
-        return maior;
-    }
-
-    public void gravarPratos(Prato[] pratos) {
-        try (BufferedWriter bw = new BufferedWriter(
-                new OutputStreamWriter(
-                        new FileOutputStream(caminhoCompletoPratos),
-                        StandardCharsets.UTF_8
-                )
-        )) {
-            for (Prato p : pratos) {
-                String linha = p.getNome() + ";"
-                        + p.getCategoria() + ";"
-                        + p.getPC() + ";"
-                        + p.getPV() + ";"
-                        + p.getTempPrep() + ";"
-                        + p.getTempCons() + ";"
-                        + p.isEstado();
-
-                bw.write(linha);
-                bw.newLine();
-            }
-            System.out.println("Pratos guardados com sucesso em: " + caminhoCompletoPratos);
-        } catch (IOException e) {
-            System.out.println("Erro ao guardar o ficheiro de pratos: " + e.getMessage());
-        }
-    }
-
-    public Prato[] criarPrato(Prato[] pratos,
-                              String nome,
-                              String categoria,
-                              double PC,
-                              double PV,
-                              int tempPrep,
-                              int tempCons,
-                              boolean estado)
-    {
-        Prato[] novosPratos = new Prato[pratos.length + 1];
-        for (int i = 0; i < pratos.length; i++) {
-            novosPratos[i] = pratos[i];
-        }
-
+    // Criar um novo prato
+    public Prato[] criarPrato(Prato[] pratos, String nome, String categoria, double PC, double PV, int tempPrep, int tempCons, boolean estado) {
         Prato novoPrato = new Prato(nome, categoria, PC, PV, tempPrep, tempCons, estado);
+        Prato[] novosPratos = Arrays.copyOf(pratos, pratos.length + 1);
         novosPratos[novosPratos.length - 1] = novoPrato;
-        System.out.println("Prato '" + nome + "' criado em memória.");
+        System.out.println("Prato " + nome + " criado.");
         return novosPratos;
     }
 
-    public void exibirPratos(Prato[] pratos) {
-        if (pratos == null || pratos.length == 0) {
-            System.out.println("Não há pratos registados.");
-            return;
-        }
-        System.out.println("\n==== Lista de Pratos ====");
-        for (Prato p : pratos) {
-            if (p == null) continue;
-            System.out.println("Nome: " + p.getNome()
-                    + ", Categoria: " + p.getCategoria()
-                    + ", Custo: " + p.getPC()
-                    + ", Preço: " + p.getPV()
-                    + ", TempoPrep: " + p.getTempPrep()
-                    + ", TempoCons: " + p.getTempCons()
-                    + ", Estado: " + (p.isEstado() ? "Disponível" : "Indisponível"));
-        }
-    }
-
-    public void atualizarPrato(Prato[] pratos,
-                               String nome,
-                               String novaCategoria,
-                               double novoPC,
-                               double novoPV,
-                               int novoTempPrep,
-                               int novoTempCons,
-                               boolean novoEstado)
-    {
-        Prato p = encontrarPratoPorNome(pratos, nome);
-        if (p != null) {
-            p.setCategoria(novaCategoria);
-            p.setPC(novoPC);
-            p.setPV(novoPV);
-            p.setTempPrep(novoTempPrep);
-            p.setTempCons(novoTempCons);
-            p.setEstado(novoEstado);
-            System.out.println("Prato '" + nome + "' foi atualizado em memória.");
+    // Atualizar (editar) os dados de um prato
+    public void atualizarPrato(Prato[] pratos, String nome, String categoria, double PC, double PV, int tempPrep, int tempCons, boolean estado) {
+        Prato prato = encontrarPratoPorNome(pratos, nome);
+        if (prato != null) {
+            prato.setCategoria(categoria);
+            prato.setPC(PC);
+            prato.setPV(PV);
+            prato.setTempPrep(tempPrep);
+            prato.setTempCons(tempCons);
+            prato.setEstado(estado);
+            System.out.println("Prato " + nome + " atualizado.");
         } else {
-            System.out.println("Prato '" + nome + "' não encontrado.");
+            System.out.println("Prato " + nome + " não encontrado.");
         }
     }
 
+
+    // Eliminar (remover) um prato pelo nome
     public Prato[] eliminarPrato(Prato[] pratos, String nome) {
         int index = -1;
+
         for (int i = 0; i < pratos.length; i++) {
-            if (pratos[i].getNome().equalsIgnoreCase(nome)) {
+            if (pratos[i].getNome().equals(nome)) {
                 index = i;
                 break;
             }
         }
-        if (index == -1) {
-            System.out.println("Prato '" + nome + "' não encontrado.");
+
+        if (index != -1) {
+            Prato[] pratosAtualizados = new Prato[pratos.length - 1];
+            System.arraycopy(pratos, 0, pratosAtualizados, 0, index);
+            System.arraycopy(pratos, index + 1, pratosAtualizados, index, pratos.length - index - 1);
+            System.out.println("Prato " + nome + " eliminado.");
+            return pratosAtualizados;
+        } else {
+            System.out.println("Prato " + nome + " não encontrado.");
             return pratos;
         }
-
-        Prato[] atualizados = new Prato[pratos.length - 1];
-        for (int i = 0, j = 0; i < pratos.length; i++) {
-            if (i != index) {
-                atualizados[j] = pratos[i];
-                j++;
-            }
-        }
-        System.out.println("Prato '" + nome + "' foi eliminado.");
-        return atualizados;
     }
 
+
+    // Lista pratos disponíveis por categoria
+    public void listarPratosPorCategoria(Prato[] pratos, String categoria) {
+        System.out.println("\n==== Pratos Disponíveis na Categoria: " + categoria + " ====");
+        boolean encontrou = false;
+        for (Prato prato : pratos) {
+            if (prato.getCategoria().equalsIgnoreCase(categoria) && prato.isEstado()) {
+                System.out.println("Nome: " + prato.getNome()
+                        + ", Preço: " + prato.getPV()
+                        + ", Tempo de Preparação: " + prato.getTempPrep()
+                        + ", Tempo de Consumo: " + prato.getTempCons());
+                encontrou = true;
+            }
+        }
+        if (!encontrou) {
+            System.out.println("Não há pratos disponíveis nesta categoria.");
+        }
+    }
+
+    // Valida um prato selecionado pelo cliente
+    public Prato validarPrato(String nome, String categoria, Prato[] pratos) {
+        for (Prato prato : pratos) {
+            if (prato.getNome().equalsIgnoreCase(nome)
+                    && prato.getCategoria().equalsIgnoreCase(categoria)
+                    && prato.isEstado()) {
+                return prato;
+            }
+        }
+        System.out.println("Prato inválido ou indisponível.");
+        return null;
+    }
+
+    // Calcula o tempo total para os pratos selecionados
+    public int calcularTempoTotal(Prato entrada, Prato principal, Prato sobremesa) {
+        int tempoTotal = 0;
+
+        if (entrada != null) {
+            tempoTotal = Math.max(tempoTotal, entrada.getTempPrep() + entrada.getTempCons());
+        }
+        if (principal != null) {
+            tempoTotal = Math.max(tempoTotal, principal.getTempPrep() + principal.getTempCons());
+        }
+        if (sobremesa != null) {
+            tempoTotal = Math.max(tempoTotal, sobremesa.getTempPrep() + sobremesa.getTempCons());
+        }
+
+        return tempoTotal;
+    }
+
+    // Calcula o custo total dos pratos selecionados
+    public double calcularCustoTotal(Prato entrada, Prato principal, Prato sobremesa) {
+        double custoTotal = 0.0;
+
+        if (entrada != null) {
+            custoTotal += entrada.getPC();
+        }
+        if (principal != null) {
+            custoTotal += principal.getPC();
+        }
+        if (sobremesa != null) {
+            custoTotal += sobremesa.getPC();
+        }
+
+        return custoTotal;
+    }
+
+    // Calcula o preço total dos pratos selecionados
+    public double calcularPrecoTotal(Prato entrada, Prato principal, Prato sobremesa) {
+        double precoTotal = 0.0;
+
+        if (entrada != null) {
+            precoTotal += entrada.getPV();
+        }
+        if (principal != null) {
+            precoTotal += principal.getPV();
+        }
+        if (sobremesa != null) {
+            precoTotal += sobremesa.getPV();
+        }
+
+        return precoTotal;
+    }
+
+    // Exibe todos os pratos
+    public void exibirPratos(Prato[] pratos) {
+        System.out.println("\n==== Lista Completa de Pratos ====");
+        for (Prato prato : pratos) {
+            System.out.println("Nome: " + prato.getNome()
+                    + ", Categoria: " + prato.getCategoria()
+                    + ", Preço Venda: " + prato.getPV()
+                    + ", Estado: " + (prato.isEstado() ? "Disponível" : "Indisponível"));
+        }
+    }
+    //Método para encontrar um prato pelo nome
     public Prato encontrarPratoPorNome(Prato[] pratos, String nome) {
-        for (Prato p : pratos) {
-            if (p.getNome().equalsIgnoreCase(nome)) {
-                return p;
+        for (Prato prato : pratos) {
+            if (prato.getNome().equals(nome)) {
+                return prato;
             }
         }
         return null;
+    }
+
+
+
+    // Grava pratos no ficheiro
+    public void gravarPratos(Prato[] pratos) {
+        try (BufferedWriter bw = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(caminhoCompletoPratos), StandardCharsets.UTF_8))) {
+            for (Prato prato : pratos) {
+                bw.write(prato.getNome() + ";" + prato.getCategoria() + ";" + prato.getPC() + ";" +
+                        prato.getPV() + ";" + prato.getTempPrep() + ";" + prato.getTempCons() + ";" +
+                        prato.isEstado());
+                bw.newLine();
+            }
+            System.out.println("Pratos salvos com sucesso.");
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar pratos no ficheiro: " + e.getMessage());
+        }
     }
 }

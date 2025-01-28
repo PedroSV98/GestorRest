@@ -66,9 +66,10 @@ public class ViewMesa {
                     System.out.print("Está ocupada? (true/false): ");
                     boolean ocupadaEdit = scanner.nextBoolean();
                     scanner.nextLine(); // Consumir quebra de linha
-                    controller.atualizarMesa(mesas, idEditar, lugaresEdit, ocupadaEdit);
+                    controller.atualizarMesa(idEditar, lugaresEdit, ocupadaEdit);
                     System.out.println("Mesa atualizada com sucesso.");
                     break;
+
 
                 case 3:
                     // Apagar mesa

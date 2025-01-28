@@ -1,12 +1,8 @@
 package View;
 
-import Controller.ConfiguracoesController;
-import Controller.ControllerMesa;
-import Controller.ControllerPrato;
-import Controller.LoginController;
+import Controller.*;
 import Model.LoginModel;
-
-
+import Model.Reserva;
 
 import java.util.Scanner;
 
@@ -47,16 +43,30 @@ public class MainMenuView {
                     ViewPrato viewPrato = new ViewPrato(controllerPrato);
                     viewPrato.exibirMenu();
                     break;
-
                 case 3:
-                    System.out.println("Opção de gerir dia-a-dia ainda não implementada.");
+                    // Carregar reservas
+                    ControllerReserva controllerReserva = new ControllerReserva(configuracoesController);
+                    Reserva[] reservas = controllerReserva.lerReservas();
+
+                    // Criar o controlador do dia a dia com as reservas
+                    ControllerGestaoDiaADia controllerGestaoDiaADia = new ControllerGestaoDiaADia(
+                            new ControllerPedido(configuracoesController),
+                            new ControllerMesa(configuracoesController),
+                            new ControllerPrato(configuracoesController),
+                            configuracoesController.getModelo().getUnidadesTempoDia(),
+                            reservas // Passa as reservas carregadas
+                    );
+
+                    ViewGestaoDiaADia viewGestaoDiaADia = new ViewGestaoDiaADia(controllerGestaoDiaADia);
+                    viewGestaoDiaADia.exibirMenu();
                     break;
+
                 case 4:
                     System.out.println("Opção de consultar estatísticas ainda não implementada.");
                     break;
                 case 5:
                     LoginView loginView = new LoginView();
-                    LoginModel loginModel = new LoginModel(configuracoesController.getModelo());// Criação da view de login
+                    LoginModel loginModel = new LoginModel(configuracoesController.getModelo()); // Criação da view de login
                     LoginController loginController = new LoginController(loginModel, loginView);  // Criação do controller de login
                     loginController.iniciarLogin(configuracoesController.getModelo());  // Chama o método de autenticação
                     break;
@@ -64,7 +74,7 @@ public class MainMenuView {
                     System.out.println("Tem a Certeza Que Quer Sair? (S/N)");
                     String resposta = scanner.nextLine();
                     if (resposta.equalsIgnoreCase("S")) {
-                        System.out.println("Encerrando a Aplicação...");
+                        System.out.println("Encerrar a Aplicação...");
                         configuracoesController.guardar();
                         running = false;
                     } else {

@@ -31,7 +31,7 @@ public class LoginController {
            String senha = view.inserirSenha();
 
             if (senha.equals("0")) {
-                view.exibirMensagem("Voltando ao Menu Principal...");
+                view.exibirMensagem("Voltar ao Menu Principal...");
                 MainMenuView mainMenuView = new MainMenuView();
                 mainMenuView.exibirMenu();
                 break;
