@@ -155,21 +155,13 @@ public class ControllerPrato {
 
     // Calcula o tempo total para os pratos selecionados
     public int calcularTempoTotal(Prato entrada, Prato principal, Prato sobremesa) {
-        int tempoTotal = 0;
+        int tempoEntrada = (entrada != null) ? entrada.getTempPrep() + entrada.getTempCons() : 0;
+        int tempoPrincipal = (principal != null) ? principal.getTempPrep() + principal.getTempCons() : 0;
+        int tempoSobremesa = (sobremesa != null) ? sobremesa.getTempPrep() + sobremesa.getTempCons() : 0;
 
-        if (entrada != null) {
-            tempoTotal = Math.max(tempoTotal, entrada.getTempPrep() + entrada.getTempCons());
-        }
-        if (principal != null) {
-            tempoTotal = Math.max(tempoTotal, principal.getTempPrep() + principal.getTempCons());
-        }
-        if (sobremesa != null) {
-            tempoTotal = Math.max(tempoTotal, sobremesa.getTempPrep() + sobremesa.getTempCons());
-        }
-
-        return tempoTotal;
+        // Retorna o maior tempo dentre os três pratos
+        return Math.max(tempoEntrada, Math.max(tempoPrincipal, tempoSobremesa));
     }
-
     // Calcula o custo total dos pratos selecionados
     public double calcularCustoTotal(Prato entrada, Prato principal, Prato sobremesa) {
         double custoTotal = 0.0;
