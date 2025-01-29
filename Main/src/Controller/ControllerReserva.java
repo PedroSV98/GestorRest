@@ -13,6 +13,7 @@ public class ControllerReserva {
     public ControllerReserva(ConfiguracoesController configController) {
         String basePath = configController.getModelo().getCaminhoFicheiros();
         this.caminhoCompletoReservas = basePath + "Reservas.txt";
+        this.configController = configController;
     }
 
     /**
