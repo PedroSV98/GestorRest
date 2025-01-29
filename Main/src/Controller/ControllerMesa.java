@@ -25,7 +25,7 @@ public class ControllerMesa {
      * Cada mesa terá 'ocupada = false'. (Modo antigo)
      */
     public Mesa[] carregarMesas() {
-        // 1) Contar as linhas válidas
+        String separador = configController.getModelo().getSeparador();
         int numLinhasValidas = 0;
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(
@@ -37,7 +37,7 @@ public class ControllerMesa {
             while ((linha = br.readLine()) != null) {
                 linha = linha.trim();
                 if (!linha.isEmpty()) {
-                    String[] partes = linha.split(";");
+                    String[] partes = linha.split(separador);
                     if (partes.length >= 2) {
                         numLinhasValidas++;
                     }
@@ -63,7 +63,7 @@ public class ControllerMesa {
                 if (linha.isEmpty()) {
                     continue;
                 }
-                String[] partes = linha.split(";");
+                String[] partes = linha.split(separador);
                 if (partes.length < 2) {
                     System.out.println("Linha inválida: " + linha);
                     continue;
@@ -183,6 +183,7 @@ public class ControllerMesa {
      * Grava (id;lugares) no ficheiro (UTF-8). Não grava 'ocupada'.
      */
     public void gravarMesas(Mesa[] mesas) {
+        String separador = configController.getModelo().getSeparador();
         try (BufferedWriter bw = new BufferedWriter(
                 new OutputStreamWriter(
                         new FileOutputStream(caminhoCompletoMesas),
@@ -191,7 +192,7 @@ public class ControllerMesa {
         )) {
             for (Mesa mesa : mesas) {
                 // Apenas ID e lugares
-                String linha = mesa.getId() + ";" + mesa.getLugares();
+                String linha = mesa.getId() + separador + mesa.getLugares();
                 bw.write(linha);
                 bw.newLine();
             }

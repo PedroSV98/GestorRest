@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 public class ControllerReserva {
-
+    private ConfiguracoesController configController;
     private final String caminhoCompletoReservas;
 
     public ControllerReserva(ConfiguracoesController configController) {
@@ -21,6 +21,7 @@ public class ControllerReserva {
      * @return Reserva[] Array contem o todas as reservas carregadas.
      */
     public Reserva[] lerReservas() {
+        String separador = configController.getModelo().getSeparador();
         Reserva[] reservasTemp = new Reserva[100]; // Limite inicial, ajustável dinamicamente
         int index = 0;
 
@@ -29,7 +30,7 @@ public class ControllerReserva {
             while ((linha = reader.readLine()) != null) {
                 linha = linha.trim();
                 if (!linha.isEmpty()) {
-                    String[] partes = linha.split(";");
+                    String[] partes = linha.split(separador);
                     if (partes.length == 3) {
                         // Expande o array dinamicamente, se necessário
                         if (index >= reservasTemp.length) {
