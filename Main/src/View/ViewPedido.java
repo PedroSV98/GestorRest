@@ -72,7 +72,7 @@ public class ViewPedido {
                     break;
                 case 5:
                     // Sair
-                    System.out.println("Saindo...");
+                    System.out.println("Sair...");
                     break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");

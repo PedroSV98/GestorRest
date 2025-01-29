@@ -9,6 +9,7 @@ import java.io.IOException;
 public class ControllerReserva {
 
     private final String caminhoCompletoReservas;
+    private ConfiguracoesController configuracoesController;
 
     public ControllerReserva(ConfiguracoesController configController) {
         String basePath = configController.getModelo().getCaminhoFicheiros();
@@ -16,13 +17,15 @@ public class ControllerReserva {
     }
 
     public Reserva[] lerReservas() {
+        String separador = configuracoesController.getModelo().getSeparador();
+
         Reserva[] reservas = new Reserva[1000000000]; // Supondo um limite de 100 reservas
         int index = 0;
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(caminhoCompletoReservas), "UTF-8"))) {
             String linha;
             while ((linha = reader.readLine()) != null && index < reservas.length) {
-                String[] partes = linha.split(";");
+                String[] partes = linha.split(separador);
                 if (partes.length == 3) {
                     Reserva reserva = new Reserva();
                     reserva.setNomeReserva(partes[0]);
