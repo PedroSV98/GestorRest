@@ -9,20 +9,22 @@ public class ControllerMesa {
     private ConfiguracoesController configController;
     private String caminhoCompletoMesas;
 
+    private Mesa[] mesas; // Armazena as mesas carregadas
+
     public ControllerMesa(ConfiguracoesController configController) {
         this.configController = configController;
         // Caminho base + "Mesas.txt"
         String basePath = configController.getModelo().getCaminhoFicheiros();
         this.caminhoCompletoMesas = basePath + "Mesas.txt";
+        this.mesas = carregarMesas();
     }
 
     /**
      * Lê o ficheiro (UTF-8) e devolve um array NOVO,
-     * ignorando o campo 'ocupada' (ficará false por omissão).
+     * ignora o campo 'ocupada' (ficará false por omissão).
      * Cada mesa terá 'ocupada = false'. (Modo antigo)
      */
     public Mesa[] carregarMesas() {
-        String separador = configController.getModelo().getSeparador();
         // 1) Contar as linhas válidas
         int numLinhasValidas = 0;
         try (BufferedReader br = new BufferedReader(
@@ -35,7 +37,7 @@ public class ControllerMesa {
             while ((linha = br.readLine()) != null) {
                 linha = linha.trim();
                 if (!linha.isEmpty()) {
-                    String[] partes = linha.split(separador);
+                    String[] partes = linha.split(";");
                     if (partes.length >= 2) {
                         numLinhasValidas++;
                     }
@@ -61,7 +63,7 @@ public class ControllerMesa {
                 if (linha.isEmpty()) {
                     continue;
                 }
-                String[] partes = linha.split(separador);
+                String[] partes = linha.split(";");
                 if (partes.length < 2) {
                     System.out.println("Linha inválida: " + linha);
                     continue;
@@ -88,8 +90,7 @@ public class ControllerMesa {
      *   e atualiza apenas 'lugares'.
      * - Se a mesa não existir, cria nova mesa (ocupada=false).
      */
-    public Mesa[] agruparComFicheiroMesa(Mesa[] emMemoria) {
-        String separador = configController.getModelo().getSeparador();
+    /*public Mesa[] agruparComFicheiroMesa(Mesa[] emMemoria) {
         String[] linhas = lerLinhasFicheiro(caminhoCompletoMesas);
         if (linhas == null || linhas.length == 0) {
             System.out.println("Ficheiro vazio ou não encontrado. Mantêm-se as mesas em memória.");
@@ -101,7 +102,7 @@ public class ControllerMesa {
             linha = linha.trim();
             if (linha.isEmpty()) continue;
 
-            String[] partes = linha.split(separador);
+            String[] partes = linha.split(";");
             if (partes.length < 2) {
                 System.out.println("Linha inválida (esperava 'id;lugares'): " + linha);
                 continue;
@@ -123,7 +124,7 @@ public class ControllerMesa {
         }
 
         return emMemoria;
-    }
+    }*/
 
     /**
      * Lê todas as linhas do ficheiro (UTF-8) sem ArrayList.
@@ -167,7 +168,7 @@ public class ControllerMesa {
     }
 
     /**
-     * Adiciona uma nova mesa a um array, criando um array maior em +1 posição.
+     * Adiciona uma nova mesa a um array, cria um array maior em +1 posição.
      */
     private Mesa[] adicionarMesa(Mesa[] originais, Mesa nova) {
         Mesa[] maior = new Mesa[originais.length + 1];
@@ -182,8 +183,6 @@ public class ControllerMesa {
      * Grava (id;lugares) no ficheiro (UTF-8). Não grava 'ocupada'.
      */
     public void gravarMesas(Mesa[] mesas) {
-        String separador = configController.getModelo().getSeparador();
-
         try (BufferedWriter bw = new BufferedWriter(
                 new OutputStreamWriter(
                         new FileOutputStream(caminhoCompletoMesas),
@@ -192,7 +191,7 @@ public class ControllerMesa {
         )) {
             for (Mesa mesa : mesas) {
                 // Apenas ID e lugares
-                String linha = mesa.getId() + separador + mesa.getLugares();
+                String linha = mesa.getId() + ";" + mesa.getLugares();
                 bw.write(linha);
                 bw.newLine();
             }
@@ -216,7 +215,7 @@ public class ControllerMesa {
     }
 
     /**
-     * Lista no ecrã as mesas (mostrando ID, lugares e se está ocupada).
+     * Lista no ecrã as mesas (mostra ID, lugares e se está ocupada).
      */
     public void exibirMesas(Mesa[] mesas) {
         if (mesas == null || mesas.length == 0) {
@@ -235,16 +234,18 @@ public class ControllerMesa {
     /**
      * Atualiza (em memória) a mesa que corresponda ao ID, se encontrada.
      */
-    public void atualizarMesa(Mesa[] mesas, int idMesa, int novosLugares, boolean novaOcupacao) {
-        Mesa mesa = encontrarMesaPorId(mesas, idMesa);
+    public void atualizarMesa(int idMesa, int novosLugares, boolean novaOcupacao) {
+        Mesa mesa = encontrarMesaPorId(idMesa); // Não precisa passar o array
         if (mesa != null) {
             mesa.setLugares(novosLugares);
             mesa.setOcupada(novaOcupacao);
-            System.out.println("Mesa " + idMesa + " atualizada em memória.");
+            System.out.println("Mesa " + idMesa + " atualizada com sucesso.");
         } else {
             System.out.println("Mesa " + idMesa + " não encontrada.");
         }
     }
+
+
 
     /**
      * Elimina a mesa do array (se encontrada) e devolve um array menor.
@@ -273,10 +274,33 @@ public class ControllerMesa {
     }
 
     /**
+     * Procura uma mesa disponível que tenha capacidade suficiente para os lugares necessários.
+     */
+    public Mesa getMesaDisponivel(int lugaresNecessarios) {
+        Mesa[] mesas = carregarMesas();
+        for (Mesa mesa : mesas) {
+            if (!mesa.isOcupada() && mesa.getLugares() >= lugaresNecessarios) {
+                return mesa; // Retorna a primeira mesa adequada
+            }
+        }
+        return null; // Nenhuma mesa disponível encontrada
+    }
+
+    /**
      * Procura uma mesa no array, pelo ID.
      */
-    private Mesa encontrarMesaPorId(Mesa[] mesas, int idMesa) {
-        for (Mesa m : mesas) {
+
+
+    public Mesa[] getMesas() {
+        return this.mesas;
+    }
+
+    public Mesa encontrarMesaPorId(int idMesa) {
+        if (this.mesas == null) {
+            System.out.println("Nenhuma mesa carregada.");
+            return null;
+        }
+        for (Mesa m : this.mesas) {
             if (m.getId() == idMesa) {
                 return m;
             }
