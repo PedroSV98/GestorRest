@@ -3,7 +3,7 @@ package Model;
 public class Pedido {
     private String cliente;
     private int mesaId;
-    private String estado; // Exemplo: "ENCAMINHADO", "PREPARAR", "CONSUMIDO", "PAGO"
+    private String estado; // Exemplo: "ENCAMINHADO", "PREPARAR", "CONSUMIR", "PAGO"
     private int tempoInicioPreparacao;
 
     private Prato entrada;
@@ -110,7 +110,7 @@ public class Pedido {
     }
 
     public boolean isConsumoFinalizado() {
-        return "CONSUMIDO".equalsIgnoreCase(estado) && calcularTempoTotal() <= 0;
+        return "CONSUMIR".equalsIgnoreCase(estado) && calcularTempoTotal() <= 0;
     }
 
     public double calcularPrecoCusto() {

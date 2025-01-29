@@ -181,8 +181,8 @@ public class ControllerGestaoDiaADia {
                 System.out.println("Cliente " + pedido.getCliente() + " começou a consumir.");
             }
             // Notifica que o cliente terminou o consumo
-            else if ("CONSUMIDO".equalsIgnoreCase(pedido.getEstado()) &&
-                    tempoDecorrido == pedido.calcularTempoTotal() + pedido.getTempoDeConsumo()) {
+            else if ("CONSUMIR".equalsIgnoreCase(pedido.getEstado()) &&
+                    tempoDecorrido == pedido.calcularTempoTotal() + pedido.getTempoDeConsumo()){
                 pedido.setEstado("CONCLUÍDO");
                 System.out.println("Cliente " + pedido.getCliente() + " terminou o consumo e libertou a mesa.");
 
