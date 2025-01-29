@@ -19,6 +19,7 @@ public class ControllerPrato {
 
     // Carrega todos os pratos do ficheiro
     public Prato[] carregarPratos() {
+        String separador = configController.getModelo().getSeparador();
         int numLinhasValidas = 0;
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(
@@ -29,7 +30,7 @@ public class ControllerPrato {
             String linha;
             while ((linha = br.readLine()) != null) {
                 linha = linha.trim();
-                if (!linha.isEmpty() && linha.split(";").length >= 7) {
+                if (!linha.isEmpty() && linha.split(separador).length >= 7) {
                     numLinhasValidas++;
                 }
             }
@@ -51,7 +52,7 @@ public class ControllerPrato {
                 linha = linha.trim();
                 if (linha.isEmpty()) continue;
 
-                String[] dados = linha.split(";");
+                String[] dados = linha.split(separador);
                 if (dados.length < 7) continue;
 
                 String nome = dados[0];
@@ -228,11 +229,12 @@ public class ControllerPrato {
 
     // Grava pratos no ficheiro
     public void gravarPratos(Prato[] pratos) {
+        String separador = configController.getModelo().getSeparador();
         try (BufferedWriter bw = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(caminhoCompletoPratos), StandardCharsets.UTF_8))) {
             for (Prato prato : pratos) {
-                bw.write(prato.getNome() + ";" + prato.getCategoria() + ";" + prato.getPC() + ";" +
-                        prato.getPV() + ";" + prato.getTempPrep() + ";" + prato.getTempCons() + ";" +
+                bw.write(prato.getNome() + separador + prato.getCategoria() + separador + prato.getPC() + separador +
+                        prato.getPV() + separador + prato.getTempPrep() + separador + prato.getTempCons() + separador +
                         prato.isEstado());
                 bw.newLine();
             }
