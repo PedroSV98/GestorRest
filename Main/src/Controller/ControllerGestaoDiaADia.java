@@ -168,51 +168,42 @@ public class ControllerGestaoDiaADia {
 
     private void atualizarConsumos() {
         for (Pedido pedido : controllerPedido.getPedidos()) {
-            int tempoDecorrido = unidadesTempoAtual - pedido.getTempoInicioPreparacao();
+            int tempoEncaminhamento = pedido.getTempoInicioPreparacao(); // Tempo em que o cliente foi encaminhado
+            int tempoEscolha = tempoEncaminhamento + 1; // Cliente escolhe pratos na próxima unidade de tempo
+            int tempoInicioPreparacao = tempoEscolha + 1 ; // Preparação inicia após a escolha
+            int tempoFimPreparacao = tempoInicioPreparacao + pedido.getMaiorTempoPreparacao(); // Termina após preparação
+            int tempoInicioConsumo = tempoFimPreparacao ; // Consumo inicia na unidade seguinte
+            int tempoFimConsumo = tempoInicioConsumo + pedido.getMaiorTempoConsumo(); // Termina após consumo
+            int tempoPagamento = tempoFimConsumo; // Cliente pode pagar após o fim do consumo
 
-            // Notifica que o cliente pode escolher os pratos
-            if (pedido.isEncaminhado() && tempoDecorrido == 1) {
+            int tempoAtual = unidadesTempoAtual - tempoEncaminhamento; // Calcula o tempo decorrido desde o encaminhamento
+
+            // Cliente escolhe pratos dinamicamente na unidade seguinte ao encaminhamento
+            if (pedido.isEncaminhado() && unidadesTempoAtual == tempoEscolha) {
                 System.out.println("Agora o cliente " + pedido.getCliente() + " pode escolher os pratos.");
                 escolherPratos(pedido);
             }
-            // Notifica que o cliente começou a consumir
-            else if (pedido.isPreparar() && tempoDecorrido == pedido.calcularTempoTotal()) {
+
+            // Notifica início da preparação
+            if (unidadesTempoAtual == tempoInicioPreparacao) {
+                System.out.println("Os pratos do cliente " + pedido.getCliente() + " começaram a ser preparados.");
+                pedido.setEstado("PREPARAR");
+            }
+
+            // Cliente começa a consumir
+            if (unidadesTempoAtual == tempoInicioConsumo) {
                 pedido.setEstado("CONSUMIR");
                 System.out.println("Cliente " + pedido.getCliente() + " começou a consumir.");
             }
-            // Notifica que o cliente terminou o consumo
-            else if ("CONSUMIDO".equalsIgnoreCase(pedido.getEstado()) &&
-                    tempoDecorrido == pedido.calcularTempoTotal() + pedido.getTempoDeConsumo()) {
-                pedido.setEstado("CONCLUÍDO");
-                System.out.println("Cliente " + pedido.getCliente() + " terminou o consumo e libertou a mesa.");
 
-                // Libera a mesa
-                Mesa mesa = controllerMesa.encontrarMesaPorId(pedido.getMesaId());
-                if (mesa != null) {
-                    mesa.setOcupada(false);
-                }
-
-                // Gera a conta para pagamento
-                gerarConta(pedido);
+            // Cliente termina o consumo e pode pagar
+            if (unidadesTempoAtual == tempoFimConsumo) {
+                pedido.setEstado("FINALIZADO");
+                System.out.println("Cliente " + pedido.getCliente() + " terminou o consumo e pode pagar.");
             }
         }
     }
 
-    private void gerarConta(Pedido pedido) {
-        double precoCusto = pedido.calcularPrecoCusto();
-        double precoTotal = pedido.calcularPrecoTotal();
-        double lucro = precoTotal - precoCusto;
-
-        System.out.println("\n=== Conta para o Cliente: " + pedido.getCliente() + " ===");
-        System.out.println("Preço de Custo: " + precoCusto);
-        System.out.println("Preço Total: " + precoTotal);
-        System.out.println("Lucro: " + lucro);
-        System.out.println("Estado: PAGO");
-
-        // Log do pagamento
-        controllerPedido.gerarLog("Pagamento processado para " + pedido.getCliente() +
-                ". Total: " + precoTotal + ", Lucro: " + lucro);
-    }
 
 
 
@@ -277,24 +268,38 @@ public class ControllerGestaoDiaADia {
     }
 
     public void processarPagamentos() {
+        Scanner scanner = new Scanner(System.in);
+
         for (Pedido pedido : controllerPedido.getPedidos()) {
-            if (pedido.isConsumoFinalizado()) {
+            // Apenas clientes que já finalizaram o consumo podem pagar
+            if (pedido.isFinalizado()) {
                 double custo = pedido.calcularPrecoCusto();
                 double total = pedido.calcularPrecoTotal();
                 double lucro = total - custo;
 
-                System.out.println("\nPagamento para " + pedido.getCliente());
+                System.out.println("\n=== Pagamento para " + pedido.getCliente() + " ===");
                 System.out.println("Preço de Custo: " + custo);
                 System.out.println("Preço Total: " + total);
                 System.out.println("Lucro: " + lucro);
+                System.out.print("Confirmar pagamento? (S/N): ");
 
-                Mesa mesa = controllerMesa.encontrarMesaPorId(pedido.getMesaId());
-                if (mesa != null) {
-                    mesa.setOcupada(false);
+                String resposta = scanner.nextLine().trim();
+                if (resposta.equalsIgnoreCase("S")) {
+                    // Cliente pagou, então podemos liberar a mesa
+                    pedido.setEstado("PAGO");
+                    Mesa mesa = controllerMesa.encontrarMesaPorId(pedido.getMesaId());
+
+                    if (mesa != null) {
+                        mesa.setOcupada(false);
+                        System.out.println("Mesa " + mesa.getId() + " agora está disponível.");
+                    }
+
+                    // Registrar pagamento no log
+                    controllerPedido.gerarLog("Pagamento confirmado: Cliente=" + pedido.getCliente() + ", Total=" + total);
+                    System.out.println("Pagamento realizado com sucesso!");
+                } else {
+                    System.out.println("Pagamento cancelado. O cliente ainda precisa pagar.");
                 }
-
-                pedido.setEstado("PAGO");
-                controllerPedido.gerarLog("Pagamento processado: Cliente=" + pedido.getCliente() + ", Total=" + total);
             }
         }
     }

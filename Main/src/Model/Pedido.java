@@ -3,7 +3,7 @@ package Model;
 public class Pedido {
     private String cliente;
     private int mesaId;
-    private String estado; // Exemplo: "ENCAMINHADO", "PREPARAR", "CONSUMIDO", "PAGO"
+    private String estado; // Exemplo: "ENCAMINHADO", "PREPARAR", "CONSUMIDO","FINALIZADO" "PAGO"
     private int tempoInicioPreparacao;
 
     private Prato entrada;
@@ -89,18 +89,8 @@ public class Pedido {
         this.quantidadeSobremesa = quantidade;
     }
 
-    public int getQuantidadeEntrada() {
-        return quantidadeEntrada;
-    }
 
-    public int getQuantidadePrincipal() {
-        return quantidadePrincipal;
-    }
-
-    public int getQuantidadeSobremesa() {
-        return quantidadeSobremesa;
-    }
-
+    // Verifica o estado do pedido
     public boolean isEncaminhado() {
         return "ENCAMINHADO".equalsIgnoreCase(estado);
     }
@@ -109,8 +99,17 @@ public class Pedido {
         return "PREPARAR".equalsIgnoreCase(estado);
     }
 
-    public boolean isConsumoFinalizado() {
-        return "CONSUMIDO".equalsIgnoreCase(estado) && calcularTempoTotal() <= 0;
+    public boolean isConsumir() {
+        return "CONSUMIR".equalsIgnoreCase(estado);
+    }
+
+
+    public boolean isFinalizado() {
+        return "FINALIZADO".equalsIgnoreCase(estado);
+    }
+
+    public boolean isPago() {
+        return "PAGO".equalsIgnoreCase(estado);
     }
 
     public double calcularPrecoCusto() {
@@ -140,32 +139,36 @@ public class Pedido {
         }
         return total;
     }
-    public int getTempoDeConsumo() {
-        int tempoConsumo = 0;
+
+    public int getMaiorTempoPreparacao() {
+        int maiorPreparacao = 0;
+
         if (entrada != null) {
-            tempoConsumo += entrada.getTempCons();
+            maiorPreparacao = Math.max(maiorPreparacao, entrada.getTempPrep());
         }
         if (principal != null) {
-            tempoConsumo += principal.getTempCons();
+            maiorPreparacao = Math.max(maiorPreparacao, principal.getTempPrep());
         }
         if (sobremesa != null) {
-            tempoConsumo += sobremesa.getTempCons();
+            maiorPreparacao = Math.max(maiorPreparacao, sobremesa.getTempPrep());
         }
-        return tempoConsumo;
+
+        return maiorPreparacao;
     }
 
+    public int getMaiorTempoConsumo() {
+        int maiorConsumo = 0;
 
-    public int calcularTempoTotal() {
-        int tempoMax = 0;
         if (entrada != null) {
-            tempoMax = Math.max(tempoMax, entrada.getTempPrep() + entrada.getTempCons());
+            maiorConsumo = Math.max(maiorConsumo, entrada.getTempCons());
         }
         if (principal != null) {
-            tempoMax = Math.max(tempoMax, principal.getTempPrep() + principal.getTempCons());
+            maiorConsumo = Math.max(maiorConsumo, principal.getTempCons());
         }
         if (sobremesa != null) {
-            tempoMax = Math.max(tempoMax, sobremesa.getTempPrep() + sobremesa.getTempCons());
+            maiorConsumo = Math.max(maiorConsumo, sobremesa.getTempCons());
         }
-        return tempoMax;
+
+        return maiorConsumo;
     }
 }
