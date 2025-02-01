@@ -3,8 +3,9 @@ package Model;
 public class Pedido {
     private String cliente;
     private int mesaId;
-    private String estado; // Exemplo: "ENCAMINHADO", "PREPARAR", "CONSUMIDO","FINALIZADO" "PAGO"
-    private int tempoInicioPreparacao;
+    private String estado; // Exemplo: "ENCAMINHADO", "PREPARAR", "CONSUMIDO", "FINALIZADO", "PAGO"
+    private int tempoEntrada; // Armazena o tempo em que o cliente chegou
+    private int quantidadePessoas;
 
     private Prato entrada;
     private Prato principal;
@@ -14,22 +15,34 @@ public class Pedido {
     private int quantidadePrincipal;
     private int quantidadeSobremesa;
 
-    // Construtor padrão
-    public Pedido(String cliente) {
+    // Construtor para clientes de reserva e espontâneos
+    public Pedido(String cliente, int quantidadePessoas, int tempoEntrada) {
         this.cliente = cliente;
-        this.estado = "NOVO";
-        this.tempoInicioPreparacao = 0;
+        this.quantidadePessoas = quantidadePessoas;
+        this.tempoEntrada = tempoEntrada; // Agora armazenamos o tempo de chegada corretamente
+        this.estado = "ENCAMINHADO";
     }
 
-    // Construtor adicional
-    public Pedido(String cliente, int mesaId, int tempoInicioPreparacao) {
-        this.cliente = cliente;
-        this.mesaId = mesaId;
-        this.tempoInicioPreparacao = tempoInicioPreparacao;
-        this.estado = "NOVO";
+    // Getter e Setter para o tempo de entrada
+    public int getTempoEntrada() {
+        return tempoEntrada;
     }
 
-    // Getters e Setters...
+    public void setTempoEntrada(int tempoEntrada) {
+        this.tempoEntrada = tempoEntrada;
+    }
+
+    // Getter para quantidade de pessoas no pedido
+    public int getQtdPessoas() {
+        return quantidadePessoas;
+    }
+
+    // Setter para quantidade de pessoas
+    public void setQtdPessoas(int quantidadePessoas) {
+        this.quantidadePessoas = quantidadePessoas;
+    }
+
+    // Getters e Setters básicos
     public String getCliente() {
         return cliente;
     }
@@ -52,14 +65,6 @@ public class Pedido {
 
     public void setEstado(String estado) {
         this.estado = estado;
-    }
-
-    public int getTempoInicioPreparacao() {
-        return tempoInicioPreparacao;
-    }
-
-    public void setTempoInicioPreparacao(int tempoInicioPreparacao) {
-        this.tempoInicioPreparacao = tempoInicioPreparacao;
     }
 
     public Prato getEntrada() {
@@ -89,8 +94,7 @@ public class Pedido {
         this.quantidadeSobremesa = quantidade;
     }
 
-
-    // Verifica o estado do pedido
+    // Métodos para verificar o estado do pedido
     public boolean isEncaminhado() {
         return "ENCAMINHADO".equalsIgnoreCase(estado);
     }
@@ -103,7 +107,6 @@ public class Pedido {
         return "CONSUMIR".equalsIgnoreCase(estado);
     }
 
-
     public boolean isFinalizado() {
         return "FINALIZADO".equalsIgnoreCase(estado);
     }
@@ -112,6 +115,7 @@ public class Pedido {
         return "PAGO".equalsIgnoreCase(estado);
     }
 
+    // Cálculo do custo total dos pratos do pedido
     public double calcularPrecoCusto() {
         double total = 0;
         if (entrada != null) {
@@ -126,6 +130,7 @@ public class Pedido {
         return total;
     }
 
+    // Cálculo do preço total de venda dos pratos do pedido
     public double calcularPrecoTotal() {
         double total = 0;
         if (entrada != null) {
@@ -140,33 +145,35 @@ public class Pedido {
         return total;
     }
 
+    // Obtém o maior tempo de preparação entre todos os pratos do pedido
     public int getMaiorTempoPreparacao() {
         int maiorPreparacao = 0;
 
-        if (entrada != null) {
-            maiorPreparacao = Math.max(maiorPreparacao, entrada.getTempPrep());
+        if (entrada != null && entrada.getTempPrep() > maiorPreparacao) {
+            maiorPreparacao = entrada.getTempPrep();
         }
-        if (principal != null) {
-            maiorPreparacao = Math.max(maiorPreparacao, principal.getTempPrep());
+        if (principal != null && principal.getTempPrep() > maiorPreparacao) {
+            maiorPreparacao = principal.getTempPrep();
         }
-        if (sobremesa != null) {
-            maiorPreparacao = Math.max(maiorPreparacao, sobremesa.getTempPrep());
+        if (sobremesa != null && sobremesa.getTempPrep() > maiorPreparacao) {
+            maiorPreparacao = sobremesa.getTempPrep();
         }
 
         return maiorPreparacao;
     }
 
+    // Obtém o maior tempo de consumo entre todos os pratos do pedido
     public int getMaiorTempoConsumo() {
         int maiorConsumo = 0;
 
-        if (entrada != null) {
-            maiorConsumo = Math.max(maiorConsumo, entrada.getTempCons());
+        if (entrada != null && entrada.getTempCons() > maiorConsumo) {
+            maiorConsumo = entrada.getTempCons();
         }
-        if (principal != null) {
-            maiorConsumo = Math.max(maiorConsumo, principal.getTempCons());
+        if (principal != null && principal.getTempCons() > maiorConsumo) {
+            maiorConsumo = principal.getTempCons();
         }
-        if (sobremesa != null) {
-            maiorConsumo = Math.max(maiorConsumo, sobremesa.getTempCons());
+        if (sobremesa != null && sobremesa.getTempCons() > maiorConsumo) {
+            maiorConsumo = sobremesa.getTempCons();
         }
 
         return maiorConsumo;

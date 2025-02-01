@@ -41,8 +41,37 @@ public class ViewGestaoDiaADia {
 
             switch (opcao) {
                 case 1 -> controllerGestao.avancarTempo();
-                case 2 -> encaminharPedido();
-                case 3 -> escolherPratos();
+                case 2 -> controllerGestao.encaminharPedido();
+                case 3 -> {
+                    Pedido[] pedidosEncaminhados = controllerGestao.getPedidosEncaminhados(); // Obter pedidos encaminhados
+
+                    if (pedidosEncaminhados.length == 0) {
+                        System.out.println("Não há clientes que podem escolher pratos agora.");
+                        break;
+                    }
+
+                    // Listar clientes encaminhados
+                    System.out.println("\n=== Clientes que podem escolher pratos ===");
+                    for (int i = 0; i < pedidosEncaminhados.length; i++) {
+                        System.out.println((i + 1) + ". " + pedidosEncaminhados[i].getCliente() +
+                                " - " + pedidosEncaminhados[i].getQtdPessoas() + " pessoas");
+                    }
+
+                    // Usuário escolhe um cliente pelo número
+                    System.out.print("Selecione um cliente pelo número: ");
+                    int escolha = scanner.nextInt();
+                    scanner.nextLine();
+
+                    if (escolha < 1 || escolha > pedidosEncaminhados.length) {
+                        System.out.println("Opção inválida.");
+                        break;
+                    }
+
+                    // Recuperar pedido escolhido e chamar `escolherPratos()`
+                    Pedido pedidoEscolhido = pedidosEncaminhados[escolha - 1];
+                    controllerGestao.escolherPratos(pedidoEscolhido);
+                }
+
                 case 4 -> controllerGestao.processarPagamentos();
                 case 5 -> System.out.println("Encerrar Gestão do Dia-a-Dia...");
                 default -> System.out.println("Opção inválida. Tente novamente.");
@@ -50,27 +79,5 @@ public class ViewGestaoDiaADia {
         } while (opcao != 5);
     }
 
-    private void encaminharPedido() {
-        System.out.print("Digite o nome do cliente: ");
-        String cliente = scanner.nextLine();
 
-        System.out.print("Digite o número de pessoas: ");
-        int quantidadePessoas = scanner.nextInt();
-        scanner.nextLine(); // Consumir quebra de linha
-
-        controllerGestao.encaminharPedido(cliente, quantidadePessoas);
-    }
-
-    public void escolherPratos() {
-        System.out.print("Digite o nome do cliente para escolher pratos: ");
-        String cliente = scanner.nextLine();
-
-        Pedido pedido = controllerGestao.encontrarPedidoPorNome(cliente);
-        if (pedido == null) {
-            System.out.println("Pedido para o cliente não encontrado.");
-            return;
-        }
-
-        controllerGestao.escolherPratos(pedido);
-    }
 }

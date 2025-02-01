@@ -64,4 +64,8 @@ public class Prato {
         this.estado = estado;
     }
 
+    public boolean estaDisponivel() {
+        return this.estado; // Retorna true se estiver disponível, false se estiver indisponível
+    }
+
 }
