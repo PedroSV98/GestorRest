@@ -14,6 +14,7 @@ public class ControllerGestaoDiaADia {
     private final Reserva[] reservas; // Adicionar reservas como membro
     private int unidadesTempoAtual;
     private final int unidadesTempoMaximo;
+
     public ControllerGestaoDiaADia(ControllerPedido controllerPedido, ControllerMesa controllerMesa, ControllerPrato controllerPrato, int unidadesTempoMaximo, Reserva[] reservas) {
         this.controllerPedido = controllerPedido;
         this.controllerMesa = controllerMesa;
@@ -37,6 +38,7 @@ public class ControllerGestaoDiaADia {
             System.out.println("O dia foi concluído.");
         }
     }
+
     public Reserva[] getReservasNoTempoAtual() {
         int count = 0;
 
@@ -164,47 +166,42 @@ public class ControllerGestaoDiaADia {
             }
         }
     }
-
-
     private void atualizarConsumos() {
         for (Pedido pedido : controllerPedido.getPedidos()) {
             int tempoEncaminhamento = pedido.getTempoInicioPreparacao(); // Tempo em que o cliente foi encaminhado
             int tempoEscolha = tempoEncaminhamento + 1; // Cliente escolhe pratos na próxima unidade de tempo
-            int tempoInicioPreparacao = tempoEscolha + 1 ; // Preparação inicia após a escolha
-            int tempoFimPreparacao = tempoInicioPreparacao + pedido.getMaiorTempoPreparacao(); // Termina após preparação
-            int tempoInicioConsumo = tempoFimPreparacao ; // Consumo inicia na unidade seguinte
-            int tempoFimConsumo = tempoInicioConsumo + pedido.getMaiorTempoConsumo(); // Termina após consumo
-            int tempoPagamento = tempoFimConsumo; // Cliente pode pagar após o fim do consumo
+            int tempoInicioPreparacao = tempoEscolha + 1; // Preparação começa após escolha
+            int tempoFimPreparacao = tempoInicioPreparacao + pedido.getMaiorTempoPreparacao(); // Fim da preparação
+            int tempoInicioConsumo = tempoFimPreparacao; // Cliente começa a consumir logo após a preparação
+            int tempoFimConsumo = tempoInicioConsumo + pedido.getMaiorTempoConsumo() -1; // Cliente termina consumo
+            int tempoPagamento = tempoFimConsumo + 1; // Cliente pode pagar na unidade seguinte ao consumo
 
-            int tempoAtual = unidadesTempoAtual - tempoEncaminhamento; // Calcula o tempo decorrido desde o encaminhamento
+            int tempoAtual = unidadesTempoAtual; // Tempo atual do sistema
 
-            // Cliente escolhe pratos dinamicamente na unidade seguinte ao encaminhamento
-            if (pedido.isEncaminhado() && unidadesTempoAtual == tempoEscolha) {
+            // **Cliente pode escolher pratos na unidade seguinte ao encaminhamento**
+            if (pedido.isEncaminhado() && tempoAtual == tempoEscolha) {
                 System.out.println("Agora o cliente " + pedido.getCliente() + " pode escolher os pratos.");
                 escolherPratos(pedido);
             }
 
-            // Notifica início da preparação
-            if (unidadesTempoAtual == tempoInicioPreparacao) {
+            // **Os pratos começam a ser preparados depois da escolha**
+            if (pedido.isPreparar() && tempoAtual == tempoInicioPreparacao) {
                 System.out.println("Os pratos do cliente " + pedido.getCliente() + " começaram a ser preparados.");
-                pedido.setEstado("PREPARAR");
             }
 
-            // Cliente começa a consumir
-            if (unidadesTempoAtual == tempoInicioConsumo) {
+            // **O cliente começa a consumir apenas após a preparação terminar**
+            if (pedido.isPreparar() && tempoAtual == tempoInicioConsumo) {
                 pedido.setEstado("CONSUMIR");
                 System.out.println("Cliente " + pedido.getCliente() + " começou a consumir.");
             }
 
-            // Cliente termina o consumo e pode pagar
-            if (unidadesTempoAtual == tempoFimConsumo) {
+            // **O cliente termina o consumo dinamicamente**
+            if (pedido.isConsumir() && tempoAtual == tempoFimConsumo) {
                 pedido.setEstado("FINALIZADO");
-                System.out.println("Cliente " + pedido.getCliente() + " terminou o consumo e pode pagar.");
+                System.out.println("Cliente " + pedido.getCliente() + " terminou o consumo e poderá pagar na próxima unidade de tempo.");
             }
         }
     }
-
-
 
 
 
@@ -271,8 +268,10 @@ public class ControllerGestaoDiaADia {
         Scanner scanner = new Scanner(System.in);
 
         for (Pedido pedido : controllerPedido.getPedidos()) {
-            // Apenas clientes que já finalizaram o consumo podem pagar
-            if (pedido.isFinalizado()) {
+            int tempoFimConsumo = pedido.getTempoInicioPreparacao() + 1 + pedido.getMaiorTempoPreparacao() + pedido.getMaiorTempoConsumo();
+            int tempoPagamento = tempoFimConsumo + 1; // Cliente pode pagar **na unidade seguinte ao fim do consumo**
+
+            if (pedido.isFinalizado() && unidadesTempoAtual == tempoPagamento) {
                 double custo = pedido.calcularPrecoCusto();
                 double total = pedido.calcularPrecoTotal();
                 double lucro = total - custo;
@@ -285,7 +284,6 @@ public class ControllerGestaoDiaADia {
 
                 String resposta = scanner.nextLine().trim();
                 if (resposta.equalsIgnoreCase("S")) {
-                    // Cliente pagou, então podemos liberar a mesa
                     pedido.setEstado("PAGO");
                     Mesa mesa = controllerMesa.encontrarMesaPorId(pedido.getMesaId());
 
@@ -294,13 +292,19 @@ public class ControllerGestaoDiaADia {
                         System.out.println("Mesa " + mesa.getId() + " agora está disponível.");
                     }
 
-                    // Registrar pagamento no log
                     controllerPedido.gerarLog("Pagamento confirmado: Cliente=" + pedido.getCliente() + ", Total=" + total);
                     System.out.println("Pagamento realizado com sucesso!");
                 } else {
                     System.out.println("Pagamento cancelado. O cliente ainda precisa pagar.");
                 }
+            } else if (pedido.isFinalizado() && unidadesTempoAtual < tempoPagamento) {
+                System.out.println("O cliente " + pedido.getCliente() + " ainda não pode pagar. Ele só poderá pagar na unidade de tempo " + tempoPagamento + ".");
             }
         }
     }
+
+
+
+
+
 }
