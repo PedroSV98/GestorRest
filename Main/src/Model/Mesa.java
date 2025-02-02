@@ -5,6 +5,10 @@ public class Mesa {
     private int lugares;
     private boolean ocupada;
 
+    private int tempoEntradaCliente;
+    private int tempoLiberacao;  // Quando a mesa foi desocupada
+
+
     public Mesa(int id, boolean ocupada, int lugares) {
         this.id = id;
         this.ocupada = ocupada;
@@ -29,4 +33,17 @@ public class Mesa {
     public void setOcupada(boolean ocupada) {
         this.ocupada = ocupada;
     }
+
+    public int getTempoEspera() {
+        return tempoLiberacao - tempoEntradaCliente;
+    }
+
+    public void setTempoEntradaCliente(int tempoEntrada) {
+        this.tempoEntradaCliente = tempoEntrada;
+    }
+
+    public void setTempoLiberacao(int tempoLiberacao) {
+        this.tempoLiberacao = tempoLiberacao;
+    }
+
 }

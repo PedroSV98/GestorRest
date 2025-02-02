@@ -21,6 +21,12 @@ public class ControllerGestaoDiaADia {
     private int tempoEspera;
     private double custoNaoAtendido;
 
+    // Variáveis de estatísticas
+    private int totalClientesAtendidos = 0;
+    private int somaTempoEspera = 0;
+    private int somaTempoParaServirMesa = 0;
+    private int totalMesasServidas = 0;
+
     public ControllerGestaoDiaADia(ControllerPedido controllerPedido,
                                    ControllerMesa controllerMesa,
                                    ControllerPrato controllerPrato,
@@ -41,7 +47,34 @@ public class ControllerGestaoDiaADia {
         // Inicializa o financeiro com valores iniciais
         this.financeiro = new Financeiro(0.0, 0.0, 0, 0, 0.0);
     }
+    public int getTotalClientesAtendidos() {
+        return totalClientesAtendidos;
+    }
 
+    public double getTempoMedioEspera() {
+        if (totalClientesAtendidos == 0) return 0;
+        return (double) somaTempoEspera  / totalClientesAtendidos;
+    }
+
+    public double getTempoMedioParaServirMesa() {
+        if (totalMesasServidas == 0) return 0;
+        return (double) somaTempoParaServirMesa  / totalMesasServidas;
+    }
+
+    public void exibirEstatisticasGerais() {
+        System.out.println("\n=== Estatísticas Gerais ===");
+
+        Prato pratoMaisPedido = obterPratoMaisVendido();
+        if (pratoMaisPedido != null) {
+            System.out.println("Prato mais pedido: " + pratoMaisPedido.getNome());
+        } else {
+            System.out.println("Nenhum prato foi vendido ainda.");
+        }
+
+        System.out.println("Total de clientes atendidos: " + getTotalClientesAtendidos());
+        System.out.println("Tempo médio de espera por cliente: " + getTempoMedioEspera() + " unidades de tempo.");
+        System.out.println("Tempo médio para servir uma mesa: " + getTempoMedioParaServirMesa() + " unidades de tempo.");
+    }
     public int getUnidadesTempoAtual() {
         return unidadesTempoAtual;
     }
@@ -81,7 +114,7 @@ public class ControllerGestaoDiaADia {
     }
 
 
-    private boolean foiEncaminhado(String nomeCliente) {
+    public boolean foiEncaminhado(String nomeCliente) {
         for (Pedido pedido : controllerPedido.getPedidos()) {
             if (pedido.getCliente().equalsIgnoreCase(nomeCliente)) {
                 return true; // Cliente já tem um pedido, logo foi encaminhado
@@ -144,11 +177,11 @@ public class ControllerGestaoDiaADia {
         System.out.println("2. Cliente espontâneo");
         System.out.print("Selecione uma opção: ");
         int tipoCliente = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine(); // Consumir a quebra de linha
 
         String cliente;
         int quantidadePessoas;
-        int tempoEncaminhamento = unidadesTempoAtual; // O tempo real de encaminhamento é aqui
+        int tempoEncaminhamento = unidadesTempoAtual; // O tempo real de encaminhamento
 
         if (tipoCliente == 1 && reservasAtuais.length > 0) {
             System.out.println("\n=== Clientes com Reserva Elegíveis ===");
@@ -170,6 +203,10 @@ public class ControllerGestaoDiaADia {
             Reserva reservaEscolhida = reservasAtuais[escolhaCliente - 1];
             cliente = reservaEscolhida.getNomeReserva();
             quantidadePessoas = reservaEscolhida.getQtdPessoas();
+
+            // Atualiza estatísticas para clientes com reserva
+            somaTempoEspera += (tempoEncaminhamento - reservaEscolhida.getTempoEntrada());
+            totalClientesAtendidos++;
         } else if (tipoCliente == 2) {
             System.out.print("Digite o nome do cliente: ");
             cliente = scanner.nextLine();
@@ -177,6 +214,9 @@ public class ControllerGestaoDiaADia {
             System.out.print("Digite o número de pessoas: ");
             quantidadePessoas = scanner.nextInt();
             scanner.nextLine();
+
+            // Incrementa o número de clientes atendidos para clientes espontâneos
+            totalClientesAtendidos++;
         } else {
             System.out.println("Opção inválida.");
             return;
@@ -213,63 +253,79 @@ public class ControllerGestaoDiaADia {
 
         Mesa mesaEscolhida = controllerMesa.encontrarMesaPorId(mesasDisponiveis[escolhaMesa - 1]);
 
-        Pedido novoPedido = new Pedido(cliente, quantidadePessoas, tempoEncaminhamento); // 🔹 Salva o tempo real de encaminhamento
+        // Cria um novo pedido e regista no sistema
+        Pedido novoPedido = new Pedido(cliente, quantidadePessoas, tempoEncaminhamento);
         novoPedido.setMesaId(mesaEscolhida.getId());
         controllerPedido.adicionarPedido(novoPedido);
+
+        // Marca a mesa como ocupada
         mesaEscolhida.setOcupada(true);
 
         System.out.println("Cliente " + cliente + " foi encaminhado para a mesa " + mesaEscolhida.getId());
     }
 
-    private void atualizarConsumos() {
+    public void atualizarConsumos() {
         for (Pedido pedido : controllerPedido.getPedidos()) {
-            int tempoEncaminhamento = pedido.getTempoEntrada(); // 🔹 Momento real do encaminhamento
-            int tempoEscolha = tempoEncaminhamento + 1; // Cliente pode escolher pratos na unidade seguinte
-            int tempoInicioPreparacao = tempoEscolha + 1;
+            int tempoEncaminhamento = pedido.getTempoEntrada(); // Momento real do encaminhamento
+            int tempoEscolha = pedido.getTempoEscolha(); // Tempo real da escolha dos pratos
+            int tempoInicioPreparacao = tempoEscolha + 1; // Preparação começa logo após a escolha
             int tempoFimPreparacao = tempoInicioPreparacao + pedido.getMaiorTempoPreparacao() - 1;
-            int tempoInicioConsumo = tempoFimPreparacao + 1;
+
+            int tempoInicioConsumo = tempoFimPreparacao + 1; // Cliente começa a consumir após preparação
             int tempoFimConsumo = tempoInicioConsumo + pedido.getMaiorTempoConsumo() - 1;
             int tempoPagamento = tempoFimConsumo + 1;
             int tempoAtual = unidadesTempoAtual;
 
-            // 🔹 Cliente pode escolher pratos se já tiver sido encaminhado
-            if (pedido.getEstado().equals("ENCAMINHADO") && tempoAtual == tempoEscolha) {
-                System.out.println("Agora o cliente " + pedido.getCliente() + " pode escolher os pratos.");
+            // Cliente pode começar a escolher pratos
+            if (pedido.getEstado().equals("ENCAMINHADO") && tempoAtual >= tempoEscolha) {
+                System.out.println("Cliente " + pedido.getCliente() + " pode agora escolher os pratos.");
                 pedido.setEstado("ESCOLHER_PRATOS");
             }
 
-            // 🔹 Início da preparação
+            // Cliente ainda não escolheu os pratos, estado não avança
+            if (pedido.getEstado().equals("ESCOLHER_PRATOS") && pedido.getTempoEscolha() == 0) {
+                System.out.println("O cliente " + pedido.getCliente() + " ainda não escolheu os pratos.");
+                continue;
+            }
+
+            // Início da preparação
             if (pedido.getEstado().equals("ESCOLHER_PRATOS") && tempoAtual == tempoInicioPreparacao) {
-                System.out.println("Os pratos do cliente " + pedido.getCliente() + " começaram a ser preparados.");
+                System.out.println("Preparação dos pratos do cliente " + pedido.getCliente() + " iniciada.");
                 pedido.setEstado("PREPARAR");
             }
 
-            // 🔹 Fim da preparação
+            // Fim da preparação
             if (pedido.getEstado().equals("PREPARAR") && tempoAtual == tempoFimPreparacao) {
-                System.out.println("Os pratos do cliente " + pedido.getCliente() + " terminaram de ser preparados.");
+                System.out.println("Preparação dos pratos do cliente " + pedido.getCliente() + " finalizada.");
                 pedido.setEstado("PREPARADO");
             }
 
-            // 🔹 Cliente começa a consumir
+            // Início do consumo
             if (pedido.getEstado().equals("PREPARADO") && tempoAtual == tempoInicioConsumo) {
-                System.out.println("Cliente " + pedido.getCliente() + " começou a consumir.");
+                System.out.println("Cliente " + pedido.getCliente() + " começou a consumir os pratos.");
                 pedido.setEstado("CONSUMIR");
             }
 
-            // 🔹 Cliente termina o consumo
+            // Fim do consumo
             if (pedido.getEstado().equals("CONSUMIR") && tempoAtual == tempoFimConsumo) {
-                System.out.println("Cliente " + pedido.getCliente() + " terminou o consumo.");
+                System.out.println("Cliente " + pedido.getCliente() + " terminou de consumir os pratos.");
                 pedido.setEstado("FINALIZADO");
+
+                // Calcula o tempo total para servir a mesa
+                int tempoParaServir = tempoFimConsumo - tempoEncaminhamento;
+                somaTempoParaServirMesa += tempoParaServir;
+                totalMesasServidas++; // Incrementa o total de mesas servidas
             }
 
-            // 🔹 Cliente pode pagar
-            if (pedido.getEstado().equals("FINALIZADO") && tempoAtual == tempoPagamento) {
-                System.out.println("Cliente " + pedido.getCliente() + " poderá pagar na unidade de tempo " + tempoPagamento + ".");
+            // Cliente pode pagar
+            if (pedido.getEstado().equals("FINALIZADO") && tempoAtual >= tempoPagamento) {
+                System.out.println("Cliente " + pedido.getCliente() + " pode agora realizar o pagamento.");
             }
         }
     }
 
-    private Prato[] obterPratosDisponiveis(Prato[] pratos, String categoria) {
+
+    public Prato[] obterPratosDisponiveis(Prato[] pratos, String categoria) {
         int count = 0;
 
         // Contar apenas pratos disponíveis
@@ -289,6 +345,40 @@ public class ControllerGestaoDiaADia {
         }
 
         return pratosDisponiveis;
+    }
+    private void contarPrato(Prato prato, Prato[] pratos, int[] contagemPratos) {
+        if (prato != null) {
+            for (int i = 0; i < pratos.length; i++) {
+                if (pratos[i].getNome().equals(prato.getNome())) {
+                    contagemPratos[i]++;
+                    break;
+                }
+            }
+        }
+    }
+
+    public Prato obterPratoMaisVendido() {
+        Prato[] pratos = controllerPrato.carregarPratos();
+        int[] contagemPratos = new int[pratos.length];
+
+        for (Pedido pedido : controllerPedido.getPedidos()) {
+            if (pedido.getEstado().equals("PAGO")) {
+                contarPrato(pedido.getEntrada(), pratos, contagemPratos);
+                contarPrato(pedido.getPrincipal(), pratos, contagemPratos);
+                contarPrato(pedido.getSobremesa(), pratos, contagemPratos);
+            }
+        }
+
+        Prato pratoMaisVendido = null;
+        int maxVendas = 0;
+        for (int i = 0; i < pratos.length; i++) {
+            if (contagemPratos[i] > maxVendas) {
+                maxVendas = contagemPratos[i];
+                pratoMaisVendido = pratos[i];
+            }
+        }
+
+        return pratoMaisVendido;
     }
 
     public Pedido[] getPedidosEncaminhados() {
@@ -313,6 +403,7 @@ public class ControllerGestaoDiaADia {
 
         return pedidosEncaminhados;
     }
+
     public void escolherPratos() {
         Pedido[] pedidosSelecionaveis = getPedidosQuePodemEscolherPratos();
 
@@ -339,10 +430,14 @@ public class ControllerGestaoDiaADia {
 
         Pedido pedidoSelecionado = pedidosSelecionaveis[escolha - 1];
         Scanner input = new Scanner(System.in);
+        boolean escolheuPrato = false;
 
         Prato[] pratos = controllerPrato.carregarPratos();
 
-        // **Escolher Entrada**
+        // Atualizar tempoEscolha para a unidade de tempo atual
+        pedidoSelecionado.definirTempoEscolha(unidadesTempoAtual);
+
+        // *Escolher Entrada*
         Prato[] entradas = obterPratosDisponiveis(pratos, "Entrada");
         if (entradas.length > 0) {
             System.out.println("\n=== Escolha um prato de entrada ===");
@@ -355,10 +450,11 @@ public class ControllerGestaoDiaADia {
                 System.out.print("Quantidade: ");
                 int qt = input.nextInt();
                 pedidoSelecionado.setEntrada(entradas[opcao - 1], qt);
+                escolheuPrato = true;
             }
         }
 
-        // **Escolher Prato Principal**
+        // *Escolher Prato Principal*
         Prato[] principais = obterPratosDisponiveis(pratos, "Principal");
         if (principais.length > 0) {
             System.out.println("\n=== Escolha um prato principal ===");
@@ -371,10 +467,11 @@ public class ControllerGestaoDiaADia {
                 System.out.print("Quantidade: ");
                 int qt = input.nextInt();
                 pedidoSelecionado.setPrincipal(principais[opcao - 1], qt);
+                escolheuPrato = true;
             }
         }
 
-        // **Escolher Sobremesa**
+        // *Escolher Sobremesa*
         Prato[] sobremesas = obterPratosDisponiveis(pratos, "Sobremesa");
         if (sobremesas.length > 0) {
             System.out.println("\n=== Escolha uma sobremesa ===");
@@ -387,16 +484,22 @@ public class ControllerGestaoDiaADia {
                 System.out.print("Quantidade: ");
                 int qt = input.nextInt();
                 pedidoSelecionado.setSobremesa(sobremesas[opcao - 1], qt);
+                escolheuPrato = true;
             }
         }
 
-        // **Atualiza Estado do Pedido**
-        pedidoSelecionado.setEstado("PREPARAR");
-        System.out.println("Pedido atualizado! O cliente " + pedidoSelecionado.getCliente() + " terá os pratos preparados.");
+        // *Verificar se o cliente escolheu pelo menos um prato antes de mudar o estado*
+        if (escolheuPrato) {
+            pedidoSelecionado.setEstado("PREPARAR");
+            System.out.println("Pedido atualizado! O cliente " + pedidoSelecionado.getCliente() + " terá os pratos preparados.");
+        } else {
+            System.out.println("O cliente " + pedidoSelecionado.getCliente() + " não escolheu nenhum prato. Ele ainda precisa escolher antes de avançar.");
+        }
     }
 
 
-    /*Ppublic Pedido encontrarPedidoPorNome(String cliente) {
+
+    /*Public Pedido encontrarPedidoPorNome(String cliente) {
         return controllerPedido.encontrarPedidoPorNome(cliente);
     }*/
 
@@ -458,4 +561,3 @@ public class ControllerGestaoDiaADia {
         System.out.println("Saldo do Restaurante: " + financeiro.getSaldoRestaurante() + "€");
     }
 }
-

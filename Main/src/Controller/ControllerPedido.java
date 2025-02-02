@@ -1,7 +1,7 @@
 package Controller;
 
 import Model.Pedido;
-
+import Model.Prato;
 public class ControllerPedido {
     private Pedido[] pedidos;
     private ConfiguracoesController configuracoesController;
@@ -31,6 +31,31 @@ public class ControllerPedido {
     public Pedido[] getPedidos() {
         return pedidos;
     }
+
+    public Prato[] getTodosPratos() {
+        int totalPratos = 0;
+
+        // Contar o número total de pratos nos pedidos
+        for (int i = 0; i < pedidos.length; i++) {
+            if (pedidos[i].getEntrada() != null) totalPratos++;
+            if (pedidos[i].getPrincipal() != null) totalPratos++;
+            if (pedidos[i].getSobremesa() != null) totalPratos++;
+        }
+
+        // Criar um array do tamanho certo
+        Prato[] todosPratos = new Prato[totalPratos];
+        int index = 0;
+
+        // Preencher o array com os pratos dos pedidos
+        for (int i = 0; i < pedidos.length; i++) {
+            if (pedidos[i].getEntrada() != null) todosPratos[index++] = pedidos[i].getEntrada();
+            if (pedidos[i].getPrincipal() != null) todosPratos[index++] = pedidos[i].getPrincipal();
+            if (pedidos[i].getSobremesa() != null) todosPratos[index++] = pedidos[i].getSobremesa();
+        }
+
+        return todosPratos;
+    }
+
 
     public void gerarLog(String mensagem) {
         // Use o configuracoesController para acessar caminhos de ficheiros ou configurações, se necessário
