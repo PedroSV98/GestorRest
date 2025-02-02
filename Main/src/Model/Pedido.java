@@ -5,6 +5,8 @@ public class Pedido {
     private int mesaId;
     private String estado; // Exemplo: "ENCAMINHADO", "PREPARAR", "CONSUMIDO", "FINALIZADO", "PAGO"
     private int tempoEntrada; // Armazena o tempo em que o cliente chegou
+    private int tempoEscolha; //  Novo campo para armazenar o tempo da escolha dos pratos
+    private int tempoPagamento; // Inicialmente indefinido
     private int quantidadePessoas;
 
     private Prato entrada;
@@ -19,18 +21,34 @@ public class Pedido {
     public Pedido(String cliente, int quantidadePessoas, int tempoEntrada) {
         this.cliente = cliente;
         this.quantidadePessoas = quantidadePessoas;
-        this.tempoEntrada = tempoEntrada; // Agora armazenamos o tempo de chegada corretamente
-        this.estado = "ENCAMINHADO";
+        this.tempoEntrada = tempoEntrada;
+        this.tempoEscolha = -1; //  Inicialmente indefinido
+        this.tempoPagamento = -1; // Inicialmente indefenido
+        this.estado = "ENCAMINHADO"; // Cliente acabou de ser encaminhado
     }
+
+    public void definirTempoPagamento(int tempo) {
+        this.tempoPagamento = tempo;
+    }
+
+    public int getTempoPagamento() {
+        return tempoPagamento;
+    }
+
+
 
     // Getter e Setter para o tempo de entrada
     public int getTempoEntrada() {
         return tempoEntrada;
     }
-
-    public void setTempoEntrada(int tempoEntrada) {
-        this.tempoEntrada = tempoEntrada;
+    public void definirTempoEscolha(int tempoEscolha) {
+        this.tempoEscolha = tempoEscolha;
     }
+
+    public int getTempoEscolha() {
+        return tempoEscolha;
+    }
+
 
     // Getter para quantidade de pessoas no pedido
     public int getQtdPessoas() {

@@ -8,6 +8,7 @@ public class Prato {
     private int tempPrep;
     private int tempCons;
     private boolean estado;
+    private int quantidadeVendida = 0;  // Contador de vendas do prato
 
 
     public Prato(String nome, String categoria, double PC, double PV, int tempPrep, int tempCons, boolean estado) {
@@ -67,5 +68,11 @@ public class Prato {
     public boolean estaDisponivel() {
         return this.estado; // Retorna true se estiver disponível, false se estiver indisponível
     }
+    public int getQuantidadeVendida() {
+        return quantidadeVendida;
+    }
 
+    public void incrementarQuantidadeVendida(int quantidade) {
+        this.quantidadeVendida += quantidade;
+    }
 }

@@ -1,23 +1,25 @@
 package View;
 
+import Controller.ControllerEstatisticas;
 import Controller.ControllerGestaoDiaADia;
-import Model.Pedido;
 import Model.Reserva;
 
 import java.util.Scanner;
 
 public class ViewGestaoDiaADia {
     private final ControllerGestaoDiaADia controllerGestao;
+    private final ControllerEstatisticas controllerEstatisticas;
     private final Scanner scanner;
 
-    public ViewGestaoDiaADia(ControllerGestaoDiaADia controllerGestao) {
+    public ViewGestaoDiaADia(ControllerGestaoDiaADia controllerGestao, ControllerEstatisticas controllerEstatisticas) {
         this.controllerGestao = controllerGestao;
-        this.scanner = new Scanner(System.in, "UTF-8");
+        this.controllerEstatisticas = controllerEstatisticas;
+        this.scanner = new Scanner(System.in);
     }
 
     public void exibirMenu() {
         int opcao;
-        do { // Mostrar reservas no tempo atual
+        do {
             Reserva[] reservasAtuais = controllerGestao.getReservasNoTempoAtual();
             System.out.println("\n=== Reservas no Tempo Atual (" + controllerGestao.getUnidadesTempoAtual() + ") ===");
             if (reservasAtuais.length > 0) {
@@ -35,22 +37,22 @@ public class ViewGestaoDiaADia {
             System.out.println("3. Escolher Pratos para Pedido");
             System.out.println("4. Processar Pagamentos");
             System.out.println("5. Financeiro");
-            System.out.println("6. Sair");
+            System.out.println("6. Estatísticas Gerais");
+            System.out.println("7. Sair");
             System.out.print("Escolha uma opção: ");
             opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir quebra de linha
+            scanner.nextLine();
 
             switch (opcao) {
                 case 1 -> controllerGestao.avancarTempo();
                 case 2 -> controllerGestao.encaminharPedido();
-                case 3 -> controllerGestao.escolherPratos(); // 🚀 Agora chamamos corretamente o método!
+                case 3 -> controllerGestao.escolherPratos();
                 case 4 -> controllerGestao.processarPagamentos();
                 case 5 -> controllerGestao.exibirDesempenhoFinanceiro();
-                case 6 -> System.out.println("Encerrar Gestão do Dia-a-Dia...");
+                case 6 -> controllerEstatisticas.exibirEstatisticasGerais();
+                case 7 -> System.out.println("Encerrar Gestão do Dia-a-Dia...");
                 default -> System.out.println("Opção inválida. Tente novamente.");
             }
-        } while (opcao != 6);
+        } while (opcao != 7);
     }
-
-
 }
