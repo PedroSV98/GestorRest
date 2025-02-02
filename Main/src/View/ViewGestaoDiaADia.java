@@ -34,7 +34,8 @@ public class ViewGestaoDiaADia {
             System.out.println("2. Encaminhar Pedido");
             System.out.println("3. Escolher Pratos para Pedido");
             System.out.println("4. Processar Pagamentos");
-            System.out.println("5. Sair");
+            System.out.println("5. Financeiro");
+            System.out.println("6. Sair");
             System.out.print("Escolha uma opção: ");
             opcao = scanner.nextInt();
             scanner.nextLine(); // Consumir quebra de linha
@@ -42,41 +43,13 @@ public class ViewGestaoDiaADia {
             switch (opcao) {
                 case 1 -> controllerGestao.avancarTempo();
                 case 2 -> controllerGestao.encaminharPedido();
-                case 3 -> {
-                    Pedido[] pedidosEncaminhados = controllerGestao.getPedidosEncaminhados(); // Obter pedidos encaminhados
-
-                    if (pedidosEncaminhados.length == 0) {
-                        System.out.println("Não há clientes que podem escolher pratos agora.");
-                        break;
-                    }
-
-                    // Listar clientes encaminhados
-                    System.out.println("\n=== Clientes que podem escolher pratos ===");
-                    for (int i = 0; i < pedidosEncaminhados.length; i++) {
-                        System.out.println((i + 1) + ". " + pedidosEncaminhados[i].getCliente() +
-                                " - " + pedidosEncaminhados[i].getQtdPessoas() + " pessoas");
-                    }
-
-                    // Usuário escolhe um cliente pelo número
-                    System.out.print("Selecione um cliente pelo número: ");
-                    int escolha = scanner.nextInt();
-                    scanner.nextLine();
-
-                    if (escolha < 1 || escolha > pedidosEncaminhados.length) {
-                        System.out.println("Opção inválida.");
-                        break;
-                    }
-
-                    // Recuperar pedido escolhido e chamar `escolherPratos()`
-                    Pedido pedidoEscolhido = pedidosEncaminhados[escolha - 1];
-                    controllerGestao.escolherPratos(pedidoEscolhido);
-                }
-
+                case 3 -> controllerGestao.escolherPratos(); // 🚀 Agora chamamos corretamente o método!
                 case 4 -> controllerGestao.processarPagamentos();
-                case 5 -> System.out.println("Encerrar Gestão do Dia-a-Dia...");
+                case 5 -> controllerGestao.exibirDesempenhoFinanceiro();
+                case 6 -> System.out.println("Encerrar Gestão do Dia-a-Dia...");
                 default -> System.out.println("Opção inválida. Tente novamente.");
             }
-        } while (opcao != 5);
+        } while (opcao != 6);
     }
 
 
