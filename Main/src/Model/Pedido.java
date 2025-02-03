@@ -36,11 +36,11 @@ public class Pedido {
     }
 
 
-
     // Getter e Setter para o tempo de entrada
     public int getTempoEntrada() {
         return tempoEntrada;
     }
+
     public void definirTempoEscolha(int tempoEscolha) {
         this.tempoEscolha = tempoEscolha;
     }
@@ -163,37 +163,35 @@ public class Pedido {
         return total;
     }
 
-    // Obtém o maior tempo de preparação entre todos os pratos do pedido
     public int getMaiorTempoPreparacao() {
         int maiorPreparacao = 0;
 
-        if (entrada != null && entrada.getTempPrep() > maiorPreparacao) {
-            maiorPreparacao = entrada.getTempPrep();
+        if (entrada != null) {
+            maiorPreparacao = Math.max(maiorPreparacao, entrada.getTempPrep());
         }
-        if (principal != null && principal.getTempPrep() > maiorPreparacao) {
-            maiorPreparacao = principal.getTempPrep();
+        if (principal != null) {
+            maiorPreparacao = Math.max(maiorPreparacao, principal.getTempPrep());
         }
-        if (sobremesa != null && sobremesa.getTempPrep() > maiorPreparacao) {
-            maiorPreparacao = sobremesa.getTempPrep();
+        if (sobremesa != null) {
+            maiorPreparacao = Math.max(maiorPreparacao, sobremesa.getTempPrep());
         }
 
-        return maiorPreparacao;
+        return maiorPreparacao; // Agora considera apenas os pratos escolhidos pelo cliente
     }
 
-    // Obtém o maior tempo de consumo entre todos os pratos do pedido
     public int getMaiorTempoConsumo() {
         int maiorConsumo = 0;
 
-        if (entrada != null && entrada.getTempCons() > maiorConsumo) {
-            maiorConsumo = entrada.getTempCons();
+        if (entrada != null) {
+            maiorConsumo = Math.max(maiorConsumo, entrada.getTempCons());
         }
-        if (principal != null && principal.getTempCons() > maiorConsumo) {
-            maiorConsumo = principal.getTempCons();
+        if (principal != null) {
+            maiorConsumo = Math.max(maiorConsumo, principal.getTempCons());
         }
-        if (sobremesa != null && sobremesa.getTempCons() > maiorConsumo) {
-            maiorConsumo = sobremesa.getTempCons();
+        if (sobremesa != null) {
+            maiorConsumo = Math.max(maiorConsumo, sobremesa.getTempCons());
         }
 
-        return maiorConsumo;
+        return maiorConsumo; // Agora considera apenas os pratos escolhidos pelo cliente
     }
 }
