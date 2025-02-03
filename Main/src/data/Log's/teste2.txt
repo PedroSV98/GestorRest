@@ -1,0 +1,92 @@
+Log inicializado com sucesso. Guardado em: teste2.txt
+=== Gestão de Restaurante ===
+1. Gerir Mesas
+2. Gerir Menus
+3. Gerir Dia-a-Dia
+4. Consultar Estatísticas
+5. Configurações
+6. Sair
+Password atual: 1
+Escolha uma opção: 1
+
+=== Menu de Mesas ===
+0 - Ler mesas
+1 - Criar mesa
+2 - Editar mesa
+3 - Apagar mesa
+4 - Gravar no ficheiro
+5 - Sair
+Escolha uma opção: 0
+
+Mesas carregadas do ficheiro para o array.
+
+==== Lista de Mesas ====
+ID: 1, Lugares: 5, Ocupada: Não
+ID: 2, Lugares: 8, Ocupada: Não
+ID: 3, Lugares: 4, Ocupada: Não
+ID: 4, Lugares: 4, Ocupada: Não
+ID: 5, Lugares: 8, Ocupada: Não
+ID: 6, Lugares: 2, Ocupada: Não
+ID: 7, Lugares: 2, Ocupada: Não
+ID: 8, Lugares: 4, Ocupada: Não
+ID: 9, Lugares: 5, Ocupada: Não
+
+=== Menu de Mesas ===
+0 - Ler mesas
+1 - Criar mesa
+2 - Editar mesa
+3 - Apagar mesa
+4 - Gravar no ficheiro
+5 - Sair
+Escolha uma opção: 5
+
+=== Gestão de Restaurante ===
+1. Gerir Mesas
+2. Gerir Menus
+3. Gerir Dia-a-Dia
+4. Consultar Estatísticas
+5. Configurações
+6. Sair
+Password atual: 1
+Escolha uma opção: 6
+Tem a Certeza Que Quer Sair? (S/N)
+
+Operação Cancelada.
+=== Gestão de Restaurante ===
+1. Gerir Mesas
+2. Gerir Menus
+3. Gerir Dia-a-Dia
+4. Consultar Estatísticas
+5. Configurações
+6. Sair
+Password atual: 1
+Escolha uma opção: 2
+
+=== Menu de Pratos ===
+0 - Ler e Agrupar pratos do ficheiro
+1 - Criar prato
+2 - Editar prato
+3 - Apagar prato
+4 - Gravar no ficheiro
+5 - Sair
+Escolha uma opção: 5
+
+=== Gestão de Restaurante ===
+1. Gerir Mesas
+2. Gerir Menus
+3. Gerir Dia-a-Dia
+4. Consultar Estatísticas
+5. Configurações
+6. Sair
+Password atual: 1
+Escolha uma opção: 4
+Opção de consultar estatísticas ainda não implementada.
+=== Gestão de Restaurante ===
+1. Gerir Mesas
+2. Gerir Menus
+3. Gerir Dia-a-Dia
+4. Consultar Estatísticas
+5. Configurações
+6. Sair
+Password atual: 1
+Escolha uma opção: 

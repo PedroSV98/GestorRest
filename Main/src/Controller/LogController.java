@@ -74,7 +74,7 @@ public class LogController {
             }, true);
 
             System.setOut(multiStream);
-            System.out.println("Log inicializado com sucesso. Guardando em: " + nomeArquivo);
+            System.out.println("Log inicializado com sucesso. Guardado em: " + nomeArquivo);
             System.out.flush();
         } catch (IOException e) {
             System.err.println("Erro ao inicializar o log: " + e.getMessage());
@@ -82,7 +82,7 @@ public class LogController {
         }
     }
 
-    public void registrarEscolhaDoUsuario(String mensagem) {
+    public void  registarEscolhaDoUtilizador(String mensagem) {
         fileStream.println(mensagem);
         System.out.flush();
     }
@@ -98,19 +98,19 @@ public class LogController {
 
         public int nextInt() {
             int escolha = scanner.nextInt();
-            logController.registrarEscolhaDoUsuario(String.valueOf(escolha));
+            logController. registarEscolhaDoUtilizador(String.valueOf(escolha));
             return escolha;
         }
 
         public String nextLine() {
             String escolha = scanner.nextLine();
-            logController.registrarEscolhaDoUsuario(escolha);
+            logController. registarEscolhaDoUtilizador(escolha);
             return escolha;
         }
 
         public double nextDouble() {
             double escolha = scanner.nextDouble();
-            logController.registrarEscolhaDoUsuario(String.valueOf(escolha));
+            logController. registarEscolhaDoUtilizador(String.valueOf(escolha));
             return escolha;
         }
 
@@ -120,13 +120,13 @@ public class LogController {
 
         public boolean nextBoolean() {
             boolean escolha = scanner.nextBoolean();
-            logController.registrarEscolhaDoUsuario(String.valueOf(escolha));
+            logController. registarEscolhaDoUtilizador(String.valueOf(escolha));
             return escolha;
         }
 
-        public String registrarEscolhaDoUsuario(String s) {
+        public String  registarEscolhaDoUtilizador(String s) {
             String escolha = scanner.nextLine();
-            logController.registrarEscolhaDoUsuario(escolha);
+            logController. registarEscolhaDoUtilizador(escolha);
             return escolha;
         }
 
@@ -169,7 +169,7 @@ public class LogController {
 
             File arquivoEscolhido = arquivosTxt[escolha - 1];
 
-            System.out.println("\nExibindo conteúdo de: " + arquivoEscolhido.getName());
+            System.out.println("\nExibir conteúdo de: " + arquivoEscolhido.getName());
             try (BufferedReader reader = new BufferedReader(new FileReader(arquivoEscolhido))) {
                 String linha;
                 while ((linha = reader.readLine()) != null) {
