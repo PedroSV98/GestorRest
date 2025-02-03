@@ -6,29 +6,19 @@ import View.ConfiguracoesView;
 import View.LoginView;
 import View.MainMenuView;
 
-import java.util.Scanner;
-import java.io.IOException;
-
-
 public class LoginController {
-    private LoginModel Model;
-    private LoginView view;
+    private final LoginModel model;
+    private final LoginView view;
 
-    public LoginController(LoginModel Model, LoginView view) {
-        this.Model = Model;
+    public LoginController(LoginModel model, LoginView view) {
+        this.model = model;
         this.view = view;
     }
 
-    public void iniciarLogin(Configuracoes model) {
+    public void iniciarLogin(Configuracoes configuracoes) {
         boolean senhaCorretaInformada = false;
         while (!senhaCorretaInformada) {
-            /*try {
-                //Model.getConfiguracoes().carregarConfiguracoes(); // Carregar as configurações sempre que iniciar o login
-            } catch (IOException e) {
-                view.exibirMensagem("Erro ao carregar configurações.");
-                return;
-            }*/
-           String senha = view.inserirSenha();
+            String senha = view.inserirSenha();
 
             if (senha.equals("0")) {
                 view.exibirMensagem("Voltar ao Menu Principal...");
@@ -37,25 +27,37 @@ public class LoginController {
                 break;
             }
 
-            if (model.getPassword().equals(senha)) {
-                //if (Model.validarSenha(senha)) {
+            if (configuracoes.getPassword().equals(senha)) {
                 view.exibirMensagem("Acesso concedido!");
                 senhaCorretaInformada = true;
 
-                ConfiguracoesController configuracoesController = ConfiguracoesController.getInstancia();
-                LoginView loginView = new LoginView();
-                LoginModel loginModel = new LoginModel(configuracoesController.getModelo());
-                LoginController loginController = new LoginController(loginModel, loginView);
-                ConfiguracoesView configuracoesView = new ConfiguracoesView(configuracoesController, loginController);
-                configuracoesView.exibirMenu();
+                // Verificando se o LogController está corretamente inicializado
+                LogController logController = model.getLogController();
+                if (logController == null) {
+                    System.out.println("❌ O LogController não foi inicializado corretamente.");
+                    return; // Abortando caso o LogController seja nulo
+                }
 
+                // Instanciando o controlador de configurações
+                ConfiguracoesController configuracoesController = ConfiguracoesController.getInstancia();
+
+                // Passando corretamente o LogController para a LoginView
+                LoginView loginView = new LoginView(logController);  // Passando logController para a LoginView
+                LoginModel loginModel = new LoginModel(configuracoes, logController); // Passando logController para o LoginModel
+
+                // Criando o LoginController com o modelo e a view correta
+                LoginController loginControllerInstance = new LoginController(loginModel, loginView);
+
+                // Criando a ConfiguracoesView, passando as dependências necessárias
+                ConfiguracoesView configuracoesView = new ConfiguracoesView(configuracoesController, loginControllerInstance, logController);
+                configuracoesView.exibirMenu();
             } else {
                 view.exibirMensagem("Senha incorreta. Tente novamente.");
             }
         }
     }
 
-    public void alterarSenha(Scanner scanner) {
+    public void alterarSenha(LogController.ScannerLog scanner) {
         System.out.println("=== Alteração de Senha ===");
 
         // Solicitar a senha atual
@@ -63,7 +65,7 @@ public class LoginController {
         String senhaAtual = scanner.nextLine();
 
         // Validar a senha atual
-        if (!Model.validarSenha(senhaAtual)) {
+        if (!model.validarSenha(senhaAtual)) {
             System.out.println("Senha atual incorreta. Operação cancelada.");
             return;
         }
@@ -85,9 +87,7 @@ public class LoginController {
             }
         } while (!novaSenha.equals(confirmacaoSenha) || novaSenha.isEmpty());
 
-        Model.getConfiguracoes().setSenhaEmMemoria(novaSenha);
+        model.alterarSenha(novaSenha);
         view.exibirMensagem("Password alterado com sucesso!");
     }
 }
-
-

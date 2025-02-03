@@ -1,10 +1,15 @@
 package Model;
 
+import Controller.LogController;
+
 public class LoginModel {
     private Configuracoes configuracoes;
+    private LogController logController;
 
-    public LoginModel(Configuracoes configuracoes){
+    // Construtor que recebe tanto o Configuracoes quanto o LogController
+    public LoginModel(Configuracoes configuracoes, LogController logController){
         this.configuracoes = configuracoes;
+        this.logController = logController;  // Inicializando o LogController corretamente
     }
 
     public boolean validarSenha(String senha) {
@@ -18,5 +23,8 @@ public class LoginModel {
     public Configuracoes getConfiguracoes() {
         return configuracoes;
     }
-}
 
+    public LogController getLogController() {
+        return logController;
+    }
+}

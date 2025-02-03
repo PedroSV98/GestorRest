@@ -1,27 +1,26 @@
 package View;
 
 import Controller.ConfiguracoesController;
+import Controller.LogController;
 import Controller.LoginController;
 import Model.Configuracoes;
 import Model.LoginModel;
 
 import java.util.Scanner;
 
-
 public class ConfiguracoesView {
+    private final ConfiguracoesController controller;
+    private final LogController logController;
+    private final LogController.ScannerLog scannerLog;
 
-    private ConfiguracoesController controller;
-
-    private LoginController loginController;
-
-    public ConfiguracoesView(ConfiguracoesController controller, LoginController loginController) {
-
+    public ConfiguracoesView(ConfiguracoesController controller, LoginController loginController, LogController logController) {
         this.controller = controller;
-        this.loginController = loginController;
+        this.logController = logController;
+        Scanner scanner = new Scanner(System.in);
+        this.scannerLog = logController.new ScannerLog(new Scanner(System.in), logController);  // Inicializando ScannerLog com instância de LogController
     }
 
     public void exibirMenu() {
-        Scanner scanner = new Scanner(System.in);
         boolean sair = false;
 
         while (!sair) {
@@ -29,27 +28,20 @@ public class ConfiguracoesView {
             System.out.println("1. Ver Configurações Atuais");
             System.out.println("2. Atualizar Configuração");
             System.out.println("3. Guardar Configurações");
-            System.out.println("4. Voltar ao Menu Principal");
+            System.out.println("4. Ver Log's");
+            System.out.println("5. Voltar ao Menu Principal");
 
             System.out.print("Escolha uma opção: ");
-            int opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir a quebra de linha
+            int opcao = scannerLog.nextInt();
+            scannerLog.nextLine(); // Consumir a quebra de linha
 
             switch (opcao) {
-                case 1:
-                    mostrarConfiguracoes();
-                    break;
-                case 2:
-                    atualizarConfiguracao(scanner);
-                    break;
-                case 3:
-                    controller.guardar();
-                    break;
-                case 4:
-                    sair = true;
-                    break;
-                default:
-                    System.out.println("Opção inválida. Tente novamente.");
+                case 1 -> mostrarConfiguracoes();
+                case 2 -> atualizarConfiguracao();
+                case 3 -> controller.guardar();
+                case 4 -> logController.listarEExibirArquivos();
+                case 5 -> sair = true;
+                default -> System.out.println("Opção inválida. Tente novamente.");
             }
         }
     }
@@ -65,7 +57,7 @@ public class ConfiguracoesView {
         System.out.println("Password: ********");
     }
 
-    private void atualizarConfiguracao(Scanner scanner) {
+    private void atualizarConfiguracao() {
         Configuracoes conf = controller.getModelo();
         System.out.println("\nCampos disponíveis para atualizar:");
         System.out.println("1. CaminhoFicheiros");
@@ -77,52 +69,47 @@ public class ConfiguracoesView {
         System.out.println("0. Voltar");
 
         System.out.print("\nQual o campo que deseja alterar? ");
-        String campo = scanner.nextLine();
+        String campo = scannerLog.nextLine();
 
         switch (campo) {
-            case "1":
-                System.out.println("Caminho do Ficheiro Atual: " + conf.getCaminhoFicheiro());
+            case "1" -> {
+                System.out.println("Caminho do Ficheiro Atual: " + conf.getCaminhoFicheiros());
                 System.out.print("Novo Caminho: ");
-                controller.atualizarCaminhoFicheiros(scanner.nextLine());
-                break;
-            case "2":
+                controller.atualizarCaminhoFicheiros(scannerLog.nextLine());
+            }
+            case "2" -> {
                 System.out.println("Separador Atual: " + conf.getSeparador());
                 System.out.print("Novo Separador: ");
-                controller.atualizarSeparador(scanner.nextLine());
-                break;
-            case "3":
+                controller.atualizarSeparador(scannerLog.nextLine());
+            }
+            case "3" -> {
                 System.out.println("Unidades de Tempo Atuais: " + conf.getUnidadesTempoDia());
                 System.out.print("Novo valor (int): ");
-                controller.atualizarUnidadesTempoDia(scanner.nextInt());
-                scanner.nextLine();
-                break;
-            case "4":
+                controller.atualizarUnidadesTempoDia(scannerLog.nextInt());
+                scannerLog.nextLine();
+            }
+            case "4" -> {
                 System.out.println("Unidades de Tempo Ação Atuais: " + conf.getTempoEsperaAcao());
                 System.out.print("Novo valor (int): ");
-                controller.atualizarTempoEsperaAcao(scanner.nextInt());
-                scanner.nextLine();
-                break;
-            case "5":
+                controller.atualizarTempoEsperaAcao(scannerLog.nextInt());
+                scannerLog.nextLine();
+            }
+            case "5" -> {
                 System.out.println("Custo Cliente Não Atendido Atual: " + conf.getCustoClienteNaoAtendido());
                 System.out.print("Novo valor (double): ");
-                controller.atualizarCustoClienteNaoAtendido(scanner.nextDouble());
-                scanner.nextLine();
-                break;
-            case "6":
-                LoginModel loginModel = new LoginModel(controller.getModelo()); // Passa o modelo corretamente
-                LoginView loginView = new LoginView(); // Cria a view de login
+                controller.atualizarCustoClienteNaoAtendido(scannerLog.nextDouble());
+                scannerLog.nextLine();
+            }
+            case "6" -> {
+                LoginModel loginModel = new LoginModel(controller.getModelo(), logController);
+                LoginView loginView = new LoginView(logController);
                 LoginController loginController = new LoginController(loginModel, loginView);
-                loginController.alterarSenha(scanner);
-                break;
-            case "0":
-                System.out.println("A Voltar ao Menu Configurações...");
+                loginController.alterarSenha(scannerLog);
+            }
+            case "0" -> {
                 exibirMenu();
-                break;
-
-            default:
-                System.out.println("Campo inválido. Verifique a lista acima.");
-                break;
+            }
+            default -> System.out.println("Campo inválido. Verifique a lista acima.");
         }
     }
 }
-

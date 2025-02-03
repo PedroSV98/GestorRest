@@ -2,17 +2,19 @@ package View;
 
 import Controller.ControllerPrato;
 import Model.Prato;
+import Controller.LogController;  // Importando o LogController
+
 import java.util.Scanner;
 
 public class ViewPrato {
 
     private ControllerPrato controller;
-    private Scanner scanner;
+    private final LogController.ScannerLog scannerLog;// Usando ScannerLog
     private Prato[] pratos;
 
-    public ViewPrato(ControllerPrato controller) {
+    public ViewPrato(ControllerPrato controller, LogController logController) {
         this.controller = controller;
-        this.scanner = new Scanner(System.in, "UTF-8"); // Configurar o Scanner para UTF-8
+        this.scannerLog = logController.new ScannerLog(new Scanner(System.in), logController);  // Inicializando ScannerLog com instância de LogController
         this.pratos = new Prato[0]; // Inicialmente vazio
     }
 
@@ -28,44 +30,44 @@ public class ViewPrato {
             System.out.println("4 - Gravar no ficheiro");
             System.out.println("5 - Sair");
             System.out.print("Escolha uma opção: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir quebra de linha
+            opcao = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
+            scannerLog.nextLine();  // Consumindo quebra de linha
 
             switch (opcao) {
                 case 0:
-                // Ler do ficheiro apenas se o array estiver vazio
-                if (pratos == null || pratos.length == 0) {
-                    pratos = controller.carregarPratos();
-                    System.out.println("Mesas carregadas do ficheiro para o array.");
-                } else {
-                    System.out.println("As mesas já foram carregadas. Alterações estão no array.");
-                }
-                // Mostrar o estado atual do array
-                controller.exibirPratos(pratos);
-                break;
+                    // Ler do ficheiro apenas se o array estiver vazio
+                    if (pratos == null || pratos.length == 0) {
+                        pratos = controller.carregarPratos();
+                        System.out.println("Pratos carregados do ficheiro para o array.");
+                    } else {
+                        System.out.println("Os pratos já foram carregados. Alterações estão no array.");
+                    }
+                    // Mostrar o estado atual do array
+                    controller.exibirPratos(pratos);
+                    break;
 
                 case 1:
                     // Criar prato
                     System.out.print("Introduza o nome do prato: ");
-                    String nomeCriar = scanner.nextLine();
+                    String nomeCriar = scannerLog.nextLine();  // Usando nextLine() do ScannerLog
                     if (controller.encontrarPratoPorNome(this.pratos, nomeCriar) != null) {
                         System.out.println("Erro: Já existe um prato com esse nome.");
                         break;
                     }
 
                     System.out.print("Introduza a categoria do prato: ");
-                    String categoria = scanner.nextLine();
+                    String categoria = scannerLog.nextLine();  // Usando nextLine() do ScannerLog
                     System.out.print("Introduza o preço de custo (ex: 1.4): ");
-                    double PC = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                    double PC = Double.parseDouble(scannerLog.nextLine().replace(",", "."));  // Usando nextLine() para capturar e converter
                     System.out.print("Introduza o preço de venda (ex: 3.5): ");
-                    double PV = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                    double PV = Double.parseDouble(scannerLog.nextLine().replace(",", "."));  // Usando nextLine() para capturar e converter
                     System.out.print("Introduza o tempo de preparação: ");
-                    int tempPrep = scanner.nextInt();
+                    int tempPrep = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
                     System.out.print("Introduza o tempo de consumo: ");
-                    int tempCons = scanner.nextInt();
+                    int tempCons = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
                     System.out.print("O prato está disponível? (true/false): ");
-                    boolean estado = scanner.nextBoolean();
-                    scanner.nextLine(); // Consumir quebra de linha
+                    boolean estado = scannerLog.nextBoolean();  // Usando nextBoolean() do ScannerLog
+                    scannerLog.nextLine();  // Consumindo quebra de linha
 
                     this.pratos = controller.criarPrato(pratos, nomeCriar, categoria, PC, PV, tempPrep, tempCons, estado);
                     System.out.println("Prato criado em memória.");
@@ -75,25 +77,25 @@ public class ViewPrato {
                 case 2:
                     // Editar prato
                     System.out.print("Introduza o nome do prato que deseja editar: ");
-                    String nomeEditar = scanner.nextLine();
+                    String nomeEditar = scannerLog.nextLine();  // Usando nextLine() do ScannerLog
                     if (controller.encontrarPratoPorNome(this.pratos, nomeEditar) == null) {
                         System.out.println("Erro: Não existe nenhum prato com esse nome.");
                         break;
                     }
 
                     System.out.print("Introduza a nova categoria: ");
-                    String novaCategoria = scanner.nextLine();
+                    String novaCategoria = scannerLog.nextLine();  // Usando nextLine() do ScannerLog
                     System.out.print("Introduza o novo preço de custo (ex: 1.4): ");
-                    double novoPC = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                    double novoPC = Double.parseDouble(scannerLog.nextLine().replace(",", "."));  // Usando nextLine() para capturar e converter
                     System.out.print("Introduza o novo preço de venda (ex: 3.5): ");
-                    double novoPV = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                    double novoPV = Double.parseDouble(scannerLog.nextLine().replace(",", "."));  // Usando nextLine() para capturar e converter
                     System.out.print("Introduza o novo tempo de preparação: ");
-                    int novoTempPrep = scanner.nextInt();
+                    int novoTempPrep = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
                     System.out.print("Introduza o novo tempo de consumo: ");
-                    int novoTempCons = scanner.nextInt();
+                    int novoTempCons = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
                     System.out.print("O prato estará disponível? (true/false): ");
-                    boolean novoEstado = scanner.nextBoolean();
-                    scanner.nextLine(); // Consumir quebra de linha
+                    boolean novoEstado = scannerLog.nextBoolean();  // Usando nextBoolean() do ScannerLog
+                    scannerLog.nextLine();  // Consumindo quebra de linha
 
                     controller.atualizarPrato(pratos, nomeEditar, novaCategoria, novoPC, novoPV, novoTempPrep, novoTempCons, novoEstado);
                     System.out.println("Prato atualizado em memória.");
@@ -103,7 +105,7 @@ public class ViewPrato {
                 case 3:
                     // Apagar prato
                     System.out.print("Introduza o nome do prato que deseja apagar: ");
-                    String nomeEliminar = scanner.nextLine();
+                    String nomeEliminar = scannerLog.nextLine();  // Usando nextLine() do ScannerLog
                     this.pratos = controller.eliminarPrato(this.pratos, nomeEliminar);
                     System.out.println("Prato eliminado.");
                     controller.exibirPratos(this.pratos);
@@ -116,13 +118,14 @@ public class ViewPrato {
                     break;
 
                 case 5:
-                    System.out.println("A sair...");
-                    break;
+                    return;
 
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
+                    break;
             }
         }
+
+        scannerLog.close();  // Fechando o ScannerLog
     }
 }
-

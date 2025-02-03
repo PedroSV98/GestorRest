@@ -3,18 +3,20 @@ package View;
 import Controller.ControllerEstatisticas;
 import Controller.ControllerGestaoDiaADia;
 import Model.Reserva;
+import Controller.LogController;
+
 
 import java.util.Scanner;
 
 public class ViewGestaoDiaADia {
     private final ControllerGestaoDiaADia controllerGestao;
     private final ControllerEstatisticas controllerEstatisticas;
-    private final Scanner scanner;
+    private final LogController.ScannerLog scannerLog;
 
-    public ViewGestaoDiaADia(ControllerGestaoDiaADia controllerGestao, ControllerEstatisticas controllerEstatisticas) {
+    public ViewGestaoDiaADia(ControllerGestaoDiaADia controllerGestao, ControllerEstatisticas controllerEstatisticas, LogController logController) {
         this.controllerGestao = controllerGestao;
         this.controllerEstatisticas = controllerEstatisticas;
-        this.scanner = new Scanner(System.in);
+        this.scannerLog = logController.new ScannerLog(new Scanner(System.in), logController);  // Inicializando ScannerLog com instância de LogController
     }
 
     public void exibirMenu() {
@@ -40,19 +42,35 @@ public class ViewGestaoDiaADia {
             System.out.println("6. Estatísticas Gerais");
             System.out.println("7. Sair");
             System.out.print("Escolha uma opção: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine();
+            opcao = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
+            scannerLog.nextLine();  // Consumindo o salto de linha
 
             switch (opcao) {
-                case 1 -> controllerGestao.avancarTempo();
-                case 2 -> controllerGestao.encaminharPedido();
-                case 3 -> controllerGestao.escolherPratos();
-                case 4 -> controllerGestao.processarPagamentos();
-                case 5 -> controllerGestao.exibirDesempenhoFinanceiro();
-                case 6 -> controllerEstatisticas.exibirEstatisticasGerais();
-                case 7 -> System.out.println("Encerrar Gestão do Dia-a-Dia...");
+                case 1 -> {
+                    controllerGestao.avancarTempo();
+                }
+                case 2 -> {
+                    controllerGestao.encaminharPedido();
+                }
+                case 3 -> {
+                    controllerGestao.escolherPratos();
+                }
+                case 4 -> {
+                    controllerGestao.processarPagamentos();
+                }
+                case 5 -> {
+                    controllerGestao.exibirDesempenhoFinanceiro();
+                }
+                case 6 -> {
+                    controllerEstatisticas.exibirEstatisticasGerais();
+                }
+                case 7 -> {
+                    return;
+                }
                 default -> System.out.println("Opção inválida. Tente novamente.");
             }
         } while (opcao != 7);
+
+        scannerLog.close();  // Fechando o ScannerLog
     }
 }

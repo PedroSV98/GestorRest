@@ -6,6 +6,7 @@ import Model.Mesa;
 import Model.Pedido;
 import Model.Prato;
 import Model.Reserva;
+import Controller.LogController;
 
 import java.util.Scanner;
 
@@ -20,6 +21,7 @@ public class ControllerGestaoDiaADia {
     private final int unidadesTempoMaximo;
     private int tempoEspera;
     private double custoNaoAtendido;
+    private final LogController.ScannerLog scannerLog;
 
     // Variáveis de estatísticas
     private int totalClientesAtendidos = 0;
@@ -31,7 +33,8 @@ public class ControllerGestaoDiaADia {
                                    ControllerMesa controllerMesa,
                                    ControllerPrato controllerPrato,
                                    int unidadesTempoMaximo,
-                                   Reserva[] reservas) {
+                                   Reserva[] reservas,
+                                   LogController logController) {
         this.controllerPedido = controllerPedido;
         this.controllerMesa = controllerMesa;
         this.controllerPrato = controllerPrato;
@@ -46,7 +49,8 @@ public class ControllerGestaoDiaADia {
 
         // Inicializa o financeiro com valores iniciais
         this.financeiro = new Financeiro(0.0, 0.0, 0, 0, 0.0);
-    }
+
+        this.scannerLog = logController.new ScannerLog(new Scanner(System.in), logController);    }
     public int getTotalClientesAtendidos() {
         return totalClientesAtendidos;
     }
@@ -172,12 +176,15 @@ public class ControllerGestaoDiaADia {
         Scanner scanner = new Scanner(System.in);
         Reserva[] reservasAtuais = getReservasNoTempoAtual();
 
-        System.out.println("\n=== Escolha o Tipo de Cliente ===");
-        System.out.println("1. Cliente com reserva");
-        System.out.println("2. Cliente espontâneo");
+        // Início do log de escolha do usuário
+        scannerLog.registrarEscolhaDoUsuario("\n=== Escolha o Tipo de Cliente ===");
+        scannerLog.registrarEscolhaDoUsuario("1. Cliente com reserva");
+        scannerLog.registrarEscolhaDoUsuario("2. Cliente espontâneo");
+
         System.out.print("Selecione uma opção: ");
         int tipoCliente = scanner.nextInt();
         scanner.nextLine(); // Consumir a quebra de linha
+        scannerLog.registrarEscolhaDoUsuario("Opção selecionada: " + tipoCliente);  // Logando a escolha do usuário
 
         String cliente;
         int quantidadePessoas;
@@ -185,8 +192,13 @@ public class ControllerGestaoDiaADia {
 
         if (tipoCliente == 1 && reservasAtuais.length > 0) {
             System.out.println("\n=== Clientes com Reserva Elegíveis ===");
+            scannerLog.registrarEscolhaDoUsuario("\n=== Clientes com Reserva Elegíveis ===");
+
             for (int i = 0; i < reservasAtuais.length; i++) {
                 System.out.println((i + 1) + ". " + reservasAtuais[i].getNomeReserva() +
+                        " - " + reservasAtuais[i].getQtdPessoas() + " pessoas (Chegada: Tempo " +
+                        reservasAtuais[i].getTempoEntrada() + ")");
+                scannerLog.registrarEscolhaDoUsuario((i + 1) + ". " + reservasAtuais[i].getNomeReserva() +
                         " - " + reservasAtuais[i].getQtdPessoas() + " pessoas (Chegada: Tempo " +
                         reservasAtuais[i].getTempoEntrada() + ")");
             }
@@ -194,9 +206,11 @@ public class ControllerGestaoDiaADia {
             System.out.print("Selecione um cliente pelo número: ");
             int escolhaCliente = scanner.nextInt();
             scanner.nextLine();
+            scannerLog.registrarEscolhaDoUsuario("Cliente selecionado: " + escolhaCliente);  // Logando a escolha
 
             if (escolhaCliente < 1 || escolhaCliente > reservasAtuais.length) {
                 System.out.println("Opção inválida.");
+                scannerLog.registrarEscolhaDoUsuario("Opção inválida.");
                 return;
             }
 
@@ -210,19 +224,24 @@ public class ControllerGestaoDiaADia {
         } else if (tipoCliente == 2) {
             System.out.print("Digite o nome do cliente: ");
             cliente = scanner.nextLine();
+            scannerLog.registrarEscolhaDoUsuario("Cliente espontâneo: " + cliente);  // Logando o nome do cliente espontâneo
 
             System.out.print("Digite o número de pessoas: ");
             quantidadePessoas = scanner.nextInt();
             scanner.nextLine();
+            scannerLog.registrarEscolhaDoUsuario("Número de pessoas: " + quantidadePessoas);  // Logando a quantidade de pessoas
 
             // Incrementa o número de clientes atendidos para clientes espontâneos
             totalClientesAtendidos++;
         } else {
             System.out.println("Opção inválida.");
+            scannerLog.registrarEscolhaDoUsuario("Opção inválida.");
             return;
         }
 
         System.out.println("\n=== Mesas Disponíveis ===");
+        scannerLog.registrarEscolhaDoUsuario("\n=== Mesas Disponíveis ===");
+
         Mesa[] mesas = controllerMesa.getMesas();
         int[] mesasDisponiveis = new int[mesas.length];
         int count = 0;
@@ -233,21 +252,27 @@ public class ControllerGestaoDiaADia {
                 System.out.println((count + 1) + ". Mesa " + mesa.getId() +
                         " - Capacidade: " + mesa.getLugares() +
                         " - Estado: Disponível");
+                scannerLog.registrarEscolhaDoUsuario((count + 1) + ". Mesa " + mesa.getId() +
+                        " - Capacidade: " + mesa.getLugares() +
+                        " - Estado: Disponível");
                 count++;
             }
         }
 
         if (count == 0) {
             System.out.println("Nenhuma mesa disponível para acomodar " + quantidadePessoas + " pessoas.");
+            scannerLog.registrarEscolhaDoUsuario("Nenhuma mesa disponível para acomodar " + quantidadePessoas + " pessoas.");
             return;
         }
 
         System.out.print("Selecione uma mesa pelo número: ");
         int escolhaMesa = scanner.nextInt();
         scanner.nextLine();
+        scannerLog.registrarEscolhaDoUsuario("Mesa selecionada: " + escolhaMesa);  // Logando a escolha da mesa
 
         if (escolhaMesa < 1 || escolhaMesa > count) {
             System.out.println("Opção inválida.");
+            scannerLog.registrarEscolhaDoUsuario("Opção inválida para selecionar mesa.");
             return;
         }
 
@@ -262,7 +287,9 @@ public class ControllerGestaoDiaADia {
         mesaEscolhida.setOcupada(true);
 
         System.out.println("Cliente " + cliente + " foi encaminhado para a mesa " + mesaEscolhida.getId());
+        scannerLog.registrarEscolhaDoUsuario("Cliente " + cliente + " foi encaminhado para a mesa " + mesaEscolhida.getId());  // Logando a conclusão do processo
     }
+
 
     public void atualizarConsumos() {
         for (Pedido pedido : controllerPedido.getPedidos()) {

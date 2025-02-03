@@ -1,6 +1,7 @@
 package View;
 
 import Controller.*;
+import Model.Configuracoes;
 import Model.LoginModel;
 import Model.Reserva;
 
@@ -8,13 +9,22 @@ import java.util.Scanner;
 
 public class MainMenuView {
     private final ConfiguracoesController configuracoesController;
+    private final LogController logController;
+    private final LogController.ScannerLog scannerLog;  // Scanner com log
 
     public MainMenuView() {
         configuracoesController = ConfiguracoesController.getInstancia();
+        Configuracoes configuracoes = configuracoesController.getModelo();
+        this.logController = new LogController(configuracoes);
+
+        logController.inicializarLog();
+
+        // 🔄 Criar ScannerLog para capturar entradas automaticamente
+        Scanner scanner = new Scanner(System.in);
+        this.scannerLog = logController.new ScannerLog(scanner, logController);
     }
 
     public void exibirMenu() {
-        Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
         while (running) {
@@ -28,22 +38,21 @@ public class MainMenuView {
             System.out.println("Password atual: " + configuracoesController.getModelo().getPassword());
             System.out.print("Escolha uma opção: ");
 
-            int opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir quebra de linha
+            int opcao = scannerLog.nextInt();  // ✅ Scanner com log automático
+             // Consumir quebra de linha
 
             switch (opcao) {
                 case 1 -> {
                     ControllerMesa controllerMesa = new ControllerMesa(configuracoesController);
-                    ViewMesa viewMesa = new ViewMesa(controllerMesa);
+                    ViewMesa viewMesa = new ViewMesa(controllerMesa, logController);
                     viewMesa.exibirMenu();
                 }
                 case 2 -> {
                     ControllerPrato controllerPrato = new ControllerPrato(configuracoesController);
-                    ViewPrato viewPrato = new ViewPrato(controllerPrato);
+                    ViewPrato viewPrato = new ViewPrato(controllerPrato, logController);
                     viewPrato.exibirMenu();
                 }
                 case 3 -> {
-                    // Inicialização dos controladores necessários
                     ControllerReserva controllerReserva = new ControllerReserva(configuracoesController);
                     Reserva[] reservas = controllerReserva.lerReservas();
 
@@ -53,25 +62,25 @@ public class MainMenuView {
 
                     ControllerGestaoDiaADia controllerGestaoDiaADia = new ControllerGestaoDiaADia(
                             controllerPedido, controllerMesa, controllerPrato,
-                            configuracoesController.getModelo().getUnidadesTempoDia(), reservas
+                            configuracoesController.getModelo().getUnidadesTempoDia(), reservas, logController
                     );
 
                     ControllerEstatisticas controllerEstatisticas = new ControllerEstatisticas(controllerGestaoDiaADia);
-                    ViewGestaoDiaADia viewGestaoDiaADia = new ViewGestaoDiaADia(controllerGestaoDiaADia, controllerEstatisticas);
+                    ViewGestaoDiaADia viewGestaoDiaADia = new ViewGestaoDiaADia(controllerGestaoDiaADia, controllerEstatisticas, logController);
                     viewGestaoDiaADia.exibirMenu();
                 }
                 case 4 -> {
                     System.out.println("Opção de consultar estatísticas ainda não implementada.");
                 }
                 case 5 -> {
-                    LoginView loginView = new LoginView();
-                    LoginModel loginModel = new LoginModel(configuracoesController.getModelo());
+                    LoginView loginView = new LoginView(logController);
+                    LoginModel loginModel = new LoginModel(configuracoesController.getModelo(), logController);
                     LoginController loginController = new LoginController(loginModel, loginView);
                     loginController.iniciarLogin(configuracoesController.getModelo());
                 }
                 case 6 -> {
                     System.out.println("Tem a Certeza Que Quer Sair? (S/N)");
-                    String resposta = scanner.nextLine();
+                    String resposta = scannerLog.nextLine();
                     if (resposta.equalsIgnoreCase("S")) {
                         System.out.println("Encerrar a Aplicação...");
                         configuracoesController.guardar();
@@ -84,7 +93,7 @@ public class MainMenuView {
             }
         }
 
-        scanner.close();
+        scannerLog.close();
     }
 
     public static void main(String[] args) {

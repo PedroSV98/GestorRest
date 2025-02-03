@@ -2,17 +2,18 @@ package View;
 
 import Controller.ControllerMesa;
 import Model.Mesa;
+import Controller.LogController;
 import java.util.Scanner;
 
 public class ViewMesa {
 
     private final ControllerMesa controller;
-    private final Scanner scanner;
+    private final LogController.ScannerLog scannerLog;  // Usando ScannerLog
     private Mesa[] mesas; // Array em memória
 
-    public ViewMesa(ControllerMesa controller) {
+    public ViewMesa(ControllerMesa controller, LogController logController) {
         this.controller = controller;
-        this.scanner = new Scanner(System.in, "UTF-8"); // Configurar o Scanner para UTF-8
+        this.scannerLog = logController.new ScannerLog(new Scanner(System.in), logController);  // Inicializando ScannerLog com instância de LogController
         this.mesas = new Mesa[0];
     }
 
@@ -28,8 +29,16 @@ public class ViewMesa {
             System.out.println("4 - Gravar no ficheiro");
             System.out.println("5 - Sair");
             System.out.print("Escolha uma opção: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir a quebra de linha
+
+            // Garantir que a entrada seja um inteiro
+            if (scannerLog.hasNextInt()) {
+                opcao = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
+                scannerLog.nextLine();  // Consumindo a quebra de linha após a leitura de um número
+            } else {
+                System.out.println("Opção inválida. Tente novamente.");
+                scannerLog.nextLine();  // Consumindo qualquer entrada inválida
+                continue;
+            }
 
             switch (opcao) {
                 case 0:
@@ -47,12 +56,11 @@ public class ViewMesa {
                 case 1:
                     // Criar mesa
                     System.out.print("ID da nova mesa: ");
-                    int idCriar = scanner.nextInt();
+                    int idCriar = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
                     System.out.print("Número de lugares: ");
-                    int lugaresCriar = scanner.nextInt();
-                    System.out.print("Está ocupada? (true/false): ");
-                    boolean ocupadaCriar = scanner.nextBoolean();
-                    scanner.nextLine(); // Consumir quebra de linha
+                    int lugaresCriar = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
+                    scannerLog.nextLine();  // Consumindo a quebra de linha
+                    boolean ocupadaCriar = obterBoolean("Está ocupada? (true/false): ");
                     mesas = controller.criarMesa(mesas, idCriar, lugaresCriar, ocupadaCriar);
                     System.out.println("Mesa criada com sucesso.");
                     break;
@@ -60,22 +68,20 @@ public class ViewMesa {
                 case 2:
                     // Editar mesa
                     System.out.print("ID da mesa a editar: ");
-                    int idEditar = scanner.nextInt();
+                    int idEditar = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
                     System.out.print("Novo número de lugares: ");
-                    int lugaresEdit = scanner.nextInt();
-                    System.out.print("Está ocupada? (true/false): ");
-                    boolean ocupadaEdit = scanner.nextBoolean();
-                    scanner.nextLine(); // Consumir quebra de linha
+                    int lugaresEdit = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
+                    scannerLog.nextLine();  // Consumindo a quebra de linha
+                    boolean ocupadaEdit = obterBoolean("Está ocupada? (true/false): ");
                     controller.atualizarMesa(idEditar, lugaresEdit, ocupadaEdit);
                     System.out.println("Mesa atualizada com sucesso.");
                     break;
 
-
                 case 3:
                     // Apagar mesa
                     System.out.print("ID da mesa a apagar: ");
-                    int idApagar = scanner.nextInt();
-                    scanner.nextLine(); // Consumir quebra de linha
+                    int idApagar = scannerLog.nextInt();  // Usando nextInt() do ScannerLog
+                    scannerLog.nextLine(); // Consumindo quebra de linha
                     mesas = controller.eliminarMesa(mesas, idApagar);
                     System.out.println("Mesa apagada com sucesso.");
                     break;
@@ -87,12 +93,28 @@ public class ViewMesa {
                     break;
 
                 case 5:
-                    System.out.println("A sair do menu de mesas...");
-                    break;
+                    return;
 
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
                     break;
+            }
+        }
+
+        scannerLog.close();  // Fechando o ScannerLog
+    }
+
+    // Método para ler um boolean de maneira segura
+    private boolean obterBoolean(String mensagem) {
+        while (true) {
+            System.out.print(mensagem);
+            String input = scannerLog.nextLine().trim().toLowerCase();
+            if (input.equals("true")) {
+                return true;
+            } else if (input.equals("false")) {
+                return false;
+            } else {
+                System.out.println("Entrada inválida. Digite 'true' ou 'false'.");
             }
         }
     }
