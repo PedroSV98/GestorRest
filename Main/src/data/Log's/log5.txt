@@ -1,0 +1,24 @@
+LogController iniciado. A monitorizar entrada e saída (log unificado em C:\\Users\\Guts\\Documents\\DocumentosDAS\\1ano\\lp1\\GestorRest\\Main\\src\\data\\Log's\log5.txt).
+=== Gestão de Restaurante ===
+1. Gerir Mesas
+2. Gerir Menus
+3. Gerir Dia-a-Dia
+4. Configurações
+5. Sair
+Password atual: 1
+Escolha uma opção: 3
+
+=== Reservas no Tempo Atual (1) ===
+Cliente: Manuel Jesus, Pessoas: 5
+Cliente: Maria José, Pessoas: 2
+Cliente: Alberto Silva, Pessoas: 7
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: fgdfdsg

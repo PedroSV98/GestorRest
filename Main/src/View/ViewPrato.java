@@ -1,6 +1,7 @@
 package View;
 
 import Controller.ControllerPrato;
+import Controller.InputHelper;
 import Model.Prato;
 import java.util.Scanner;
 
@@ -12,7 +13,8 @@ public class ViewPrato {
 
     public ViewPrato(ControllerPrato controller) {
         this.controller = controller;
-        this.scanner = new Scanner(System.in, "UTF-8"); // Configurar o Scanner para UTF-8
+        // Configurar o Scanner para UTF-8
+        this.scanner = new Scanner(System.in, "UTF-8");
         this.pratos = new Prato[0]; // Inicialmente vazio
     }
 
@@ -21,51 +23,62 @@ public class ViewPrato {
 
         while (opcao != 5) {
             System.out.println("\n=== Menu de Pratos ===");
-            System.out.println("0 - Ler e Agrupar pratos do ficheiro");
+            System.out.println("0 - Ler pratos");
             System.out.println("1 - Criar prato");
             System.out.println("2 - Editar prato");
             System.out.println("3 - Apagar prato");
             System.out.println("4 - Gravar no ficheiro");
             System.out.println("5 - Sair");
-            System.out.print("Escolha uma opção: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir quebra de linha
+
+            opcao = InputHelper.lerInteiro(scanner, "Escolha uma opção: ");
 
             switch (opcao) {
                 case 0:
-                // Ler do ficheiro apenas se o array estiver vazio
-                if (pratos == null || pratos.length == 0) {
-                    pratos = controller.carregarPratos();
-                    System.out.println("Mesas carregadas do ficheiro para o array.");
-                } else {
-                    System.out.println("As mesas já foram carregadas. Alterações estão no array.");
-                }
-                // Mostrar o estado atual do array
-                controller.exibirPratos(pratos);
-                break;
+                    // Ler do ficheiro apenas se o array estiver vazio
+                    if (pratos == null || pratos.length == 0) {
+                        pratos = controller.carregarPratos();
+                        System.out.println("Pratos carregados do ficheiro para o array.");
+                    } else {
+                        System.out.println("Os pratos já foram carregados. Alterações estão no array.");
+                    }
+                    // Mostrar o estado atual do array
+                    controller.exibirPratos(pratos);
+                    break;
 
                 case 1:
                     // Criar prato
-                    System.out.print("Introduza o nome do prato: ");
-                    String nomeCriar = scanner.nextLine();
+                    String nomeCriar = InputHelper.lerString(scanner, "Introduza o nome do prato: ");
                     if (controller.encontrarPratoPorNome(this.pratos, nomeCriar) != null) {
                         System.out.println("Erro: Já existe um prato com esse nome.");
                         break;
                     }
+                    String categoria = InputHelper.lerString(scanner, "Introduza a categoria do prato: ");
 
-                    System.out.print("Introduza a categoria do prato: ");
-                    String categoria = scanner.nextLine();
-                    System.out.print("Introduza o preço de custo (ex: 1.4): ");
-                    double PC = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                    System.out.print("Introduza o preço de venda (ex: 3.5): ");
-                    double PV = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                    System.out.print("Introduza o tempo de preparação: ");
-                    int tempPrep = scanner.nextInt();
-                    System.out.print("Introduza o tempo de consumo: ");
-                    int tempCons = scanner.nextInt();
-                    System.out.print("O prato está disponível? (true/false): ");
-                    boolean estado = scanner.nextBoolean();
-                    scanner.nextLine(); // Consumir quebra de linha
+                    double PC = 0.0;
+                    while (true) {
+                        String pcStr = InputHelper.lerString(scanner, "Introduza o preço de custo (ex: 1.4): ");
+                        try {
+                            PC = Double.parseDouble(pcStr.replace(",", "."));
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Entrada inválida. Por favor, insira um número válido para o preço de custo.");
+                        }
+                    }
+
+                    double PV = 0.0;
+                    while (true) {
+                        String pvStr = InputHelper.lerString(scanner, "Introduza o preço de venda (ex: 3.5): ");
+                        try {
+                            PV = Double.parseDouble(pvStr.replace(",", "."));
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Entrada inválida. Por favor, insira um número válido para o preço de venda.");
+                        }
+                    }
+
+                    int tempPrep = InputHelper.lerInteiro(scanner, "Introduza o tempo de preparação: ");
+                    int tempCons = InputHelper.lerInteiro(scanner, "Introduza o tempo de consumo: ");
+                    boolean estado = InputHelper.lerBoolean(scanner, "O prato está disponível? (true/false): ");
 
                     this.pratos = controller.criarPrato(pratos, nomeCriar, categoria, PC, PV, tempPrep, tempCons, estado);
                     System.out.println("Prato criado em memória.");
@@ -74,26 +87,38 @@ public class ViewPrato {
 
                 case 2:
                     // Editar prato
-                    System.out.print("Introduza o nome do prato que deseja editar: ");
-                    String nomeEditar = scanner.nextLine();
+                    String nomeEditar = InputHelper.lerString(scanner, "Introduza o nome do prato que deseja editar: ");
                     if (controller.encontrarPratoPorNome(this.pratos, nomeEditar) == null) {
                         System.out.println("Erro: Não existe nenhum prato com esse nome.");
                         break;
                     }
+                    String novaCategoria = InputHelper.lerString(scanner, "Introduza a nova categoria: ");
 
-                    System.out.print("Introduza a nova categoria: ");
-                    String novaCategoria = scanner.nextLine();
-                    System.out.print("Introduza o novo preço de custo (ex: 1.4): ");
-                    double novoPC = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                    System.out.print("Introduza o novo preço de venda (ex: 3.5): ");
-                    double novoPV = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                    System.out.print("Introduza o novo tempo de preparação: ");
-                    int novoTempPrep = scanner.nextInt();
-                    System.out.print("Introduza o novo tempo de consumo: ");
-                    int novoTempCons = scanner.nextInt();
-                    System.out.print("O prato estará disponível? (true/false): ");
-                    boolean novoEstado = scanner.nextBoolean();
-                    scanner.nextLine(); // Consumir quebra de linha
+                    double novoPC = 0.0;
+                    while (true) {
+                        String novoPCStr = InputHelper.lerString(scanner, "Introduza o novo preço de custo (ex: 1.4): ");
+                        try {
+                            novoPC = Double.parseDouble(novoPCStr.replace(",", "."));
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Entrada inválida. Por favor, insira um número válido para o novo preço de custo.");
+                        }
+                    }
+
+                    double novoPV = 0.0;
+                    while (true) {
+                        String novoPVStr = InputHelper.lerString(scanner, "Introduza o novo preço de venda (ex: 3.5): ");
+                        try {
+                            novoPV = Double.parseDouble(novoPVStr.replace(",", "."));
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Entrada inválida. Por favor, insira um número válido para o novo preço de venda.");
+                        }
+                    }
+
+                    int novoTempPrep = InputHelper.lerInteiro(scanner, "Introduza o novo tempo de preparação: ");
+                    int novoTempCons = InputHelper.lerInteiro(scanner, "Introduza o novo tempo de consumo: ");
+                    boolean novoEstado = InputHelper.lerBoolean(scanner, "O prato estará disponível? (true/false): ");
 
                     controller.atualizarPrato(pratos, nomeEditar, novaCategoria, novoPC, novoPV, novoTempPrep, novoTempCons, novoEstado);
                     System.out.println("Prato atualizado em memória.");
@@ -102,8 +127,7 @@ public class ViewPrato {
 
                 case 3:
                     // Apagar prato
-                    System.out.print("Introduza o nome do prato que deseja apagar: ");
-                    String nomeEliminar = scanner.nextLine();
+                    String nomeEliminar = InputHelper.lerString(scanner, "Introduza o nome do prato que deseja apagar: ");
                     this.pratos = controller.eliminarPrato(this.pratos, nomeEliminar);
                     System.out.println("Prato eliminado.");
                     controller.exibirPratos(this.pratos);
@@ -125,4 +149,3 @@ public class ViewPrato {
         }
     }
 }
-

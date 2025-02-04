@@ -2,8 +2,8 @@ package View;
 
 import Controller.ControllerEstatisticas;
 import Controller.ControllerGestaoDiaADia;
+import Controller.InputHelper;
 import Model.Reserva;
-
 import java.util.Scanner;
 
 public class ViewGestaoDiaADia {
@@ -39,9 +39,9 @@ public class ViewGestaoDiaADia {
             System.out.println("5. Financeiro");
             System.out.println("6. Estatísticas Gerais");
             System.out.println("7. Sair");
-            System.out.print("Escolha uma opção: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine();
+
+            // Utiliza o InputHelper para ler a opção de forma segura
+            opcao = InputHelper.lerInteiro(scanner, "Escolha uma opção: ");
 
             switch (opcao) {
                 case 1 -> controllerGestao.avancarTempo();

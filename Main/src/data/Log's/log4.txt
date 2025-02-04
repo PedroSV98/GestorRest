@@ -1,0 +1,9 @@
+LogController iniciado. A monitorizar entrada e saída (log unificado em C:\\Users\\Guts\\Documents\\DocumentosDAS\\1ano\\lp1\\GestorRest\\Main\\src\\data\\Log's\log4.txt).
+=== Gestão de Restaurante ===
+1. Gerir Mesas
+2. Gerir Menus
+3. Gerir Dia-a-Dia
+4. Configurações
+5. Sair
+Password atual: 1
+Escolha uma opção: dfgdfg

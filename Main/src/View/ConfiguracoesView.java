@@ -1,21 +1,19 @@
 package View;
 
 import Controller.ConfiguracoesController;
+import Controller.InputHelper;
 import Controller.LoginController;
 import Model.Configuracoes;
 import Model.LoginModel;
 
 import java.util.Scanner;
 
-
 public class ConfiguracoesView {
 
     private ConfiguracoesController controller;
-
     private LoginController loginController;
 
     public ConfiguracoesView(ConfiguracoesController controller, LoginController loginController) {
-
         this.controller = controller;
         this.loginController = loginController;
     }
@@ -31,9 +29,7 @@ public class ConfiguracoesView {
             System.out.println("3. Guardar Configurações");
             System.out.println("4. Voltar ao Menu Principal");
 
-            System.out.print("Escolha uma opção: ");
-            int opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir a quebra de linha
+            int opcao = InputHelper.lerInteiro(scanner, "Escolha uma opção: ");
 
             switch (opcao) {
                 case 1:
@@ -76,41 +72,38 @@ public class ConfiguracoesView {
         System.out.println("6. Password");
         System.out.println("0. Voltar");
 
-        System.out.print("\nQual o campo que deseja alterar? ");
-        String campo = scanner.nextLine();
+        String campo = InputHelper.lerString(scanner, "\nQual o campo que deseja alterar? ");
 
         switch (campo) {
             case "1":
                 System.out.println("Caminho do Ficheiro Atual: " + conf.getCaminhoFicheiro());
-                System.out.print("Novo Caminho: ");
-                controller.atualizarCaminhoFicheiros(scanner.nextLine());
+                String novoCaminho = InputHelper.lerString(scanner, "Novo Caminho: ");
+                controller.atualizarCaminhoFicheiros(novoCaminho);
                 break;
             case "2":
                 System.out.println("Separador Atual: " + conf.getSeparador());
-                System.out.print("Novo Separador: ");
-                controller.atualizarSeparador(scanner.nextLine());
+                String novoSeparador = InputHelper.lerString(scanner, "Novo Separador: ");
+                controller.atualizarSeparador(novoSeparador);
                 break;
             case "3":
                 System.out.println("Unidades de Tempo Atuais: " + conf.getUnidadesTempoDia());
-                System.out.print("Novo valor (int): ");
-                controller.atualizarUnidadesTempoDia(scanner.nextInt());
-                scanner.nextLine();
+                int novoUnidades = InputHelper.lerInteiro(scanner, "Novo valor (int): ");
+                controller.atualizarUnidadesTempoDia(novoUnidades);
                 break;
             case "4":
-                System.out.println("Unidades de Tempo Ação Atuais: " + conf.getTempoEsperaAcao());
-                System.out.print("Novo valor (int): ");
-                controller.atualizarTempoEsperaAcao(scanner.nextInt());
-                scanner.nextLine();
+                System.out.println("Tempo de Espera Ação Atual: " + conf.getTempoEsperaAcao());
+                int novoTempoEspera = InputHelper.lerInteiro(scanner, "Novo valor (int): ");
+                controller.atualizarTempoEsperaAcao(novoTempoEspera);
                 break;
             case "5":
                 System.out.println("Custo Cliente Não Atendido Atual: " + conf.getCustoClienteNaoAtendido());
-                System.out.print("Novo valor (double): ");
-                controller.atualizarCustoClienteNaoAtendido(scanner.nextDouble());
-                scanner.nextLine();
+                double novoCusto = InputHelper.lerDouble(scanner, "Novo valor (double): ");
+                controller.atualizarCustoClienteNaoAtendido(novoCusto);
                 break;
             case "6":
-                LoginModel loginModel = new LoginModel(controller.getModelo()); // Passa o modelo corretamente
-                LoginView loginView = new LoginView(); // Cria a view de login
+                // Cria uma instância de LoginModel e LoginView para alterar a senha
+                LoginModel loginModel = new LoginModel(controller.getModelo());
+                LoginView loginView = new LoginView();
                 LoginController loginController = new LoginController(loginModel, loginView);
                 loginController.alterarSenha(scanner);
                 break;
@@ -118,11 +111,9 @@ public class ConfiguracoesView {
                 System.out.println("A Voltar ao Menu Configurações...");
                 exibirMenu();
                 break;
-
             default:
                 System.out.println("Campo inválido. Verifique a lista acima.");
                 break;
         }
     }
 }
-
