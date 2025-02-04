@@ -1,4 +1,4 @@
-caminhoFicheiros: C:\\Users\\Guts\\Documents\\DocumentosDAS\\1ano\\lp1\\GestorRest\\Main\\src\\data\\
+caminhoFicheiros: C:\\Users\\pedr0\\Desktop\\GestorRest\\Main\\src\\data\\
 separador: ;
 unidadesTempoDia: 24
 tempoEsperaAcao: 9
