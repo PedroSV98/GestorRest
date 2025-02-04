@@ -133,7 +133,7 @@ public class ControllerMesa {
     }*/
 
     /**
-     * Lê todas as linhas do ficheiro (UTF-8) sem ArrayList.
+     * Lê todas as linhas do ficheiro (UTF-8)
      */
     private String[] lerLinhasFicheiro(String caminho) {
         int contagem = 0;

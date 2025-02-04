@@ -139,7 +139,7 @@ public class ControllerPrato {
     }
 
     /**
-     * Lê todas as linhas de um ficheiro (UTF-8) e retorna num array de Strings (sem usar ArrayList).
+     * Lê todas as linhas de um ficheiro (UTF-8) e retorna num array de Strings
      * Fazemos em duas passagens: contar e depois armazenar.
      */
     private String[] lerLinhasFicheiroUTF8(String caminho) {
