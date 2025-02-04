@@ -25,16 +25,14 @@ public class MainMenuView {
         while (running) {
             System.out.println("=== Gestão de Restaurante ===");
             System.out.println("1. Gerir Mesas");
-
             System.out.println("2. Gerir Menus");
             System.out.println("3. Gerir Dia-a-Dia");
             System.out.println("4. Configurações");
             System.out.println("5. Sair");
             System.out.println("Password atual: " + configuracoesController.getModelo().getPassword());
-            System.out.print("Escolha uma opção: ");
 
-            int opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir quebra de linha
+            // Utiliza o InputHelper para ler um inteiro de forma segura
+            int opcao = InputHelper.lerInteiro(scanner, "Escolha uma opção: ");
 
             switch (opcao) {
                 case 1 -> {
@@ -76,17 +74,16 @@ public class MainMenuView {
                     loginController.iniciarLogin(configuracoesController.getModelo());
                 }
                 case 5 -> {
-                    System.out.println("Tem a Certeza Que Quer Sair? (S/N)");
-                    String resposta = scanner.nextLine();
+                    String resposta = InputHelper.lerString(scanner, "Tem a Certeza que quer sair? (S/N): ");
                     if (resposta.equalsIgnoreCase("S")) {
-                        System.out.println("Encerrar a Aplicação...");
+                        System.out.println("Encerrar a aplicação...");
                         configuracoesController.guardar();
                         running = false;
                     } else {
-                        System.out.println("Operação Cancelada.");
+                        System.out.println("Operação cancelada.");
                     }
                 }
-                default -> System.out.println("Opção inválida. Tente Novamente.");
+                default -> System.out.println("Opção inválida. Tente novamente.");
             }
         }
 
