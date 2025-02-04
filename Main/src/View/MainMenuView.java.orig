@@ -68,7 +68,7 @@ public class MainMenuView {
                     System.out.println("Tem a Certeza Que Quer Sair? (S/N)");
                     String resposta = scanner.nextLine();
                     if (resposta.equalsIgnoreCase("S")) {
-                        System.out.println("Encerrando a Aplicação...");
+                        System.out.println("Encerrar a Aplicação...");
                         configuracoesController.guardar();
                         running = false;
                     } else {

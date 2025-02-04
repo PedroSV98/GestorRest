@@ -13,8 +13,8 @@ import Controller.ConfiguracoesController;  // Certifique-se que esta classe exi
 
 /**
  * O LogController inicializa a monitorização dos fluxos padrão de entrada e saída,
- * criando um ficheiro unificado de log num diretório configurado (ex: data/Log's/),
- * numerando o ficheiro (ex: log_unificado1.txt, log_unificado2.txt, etc.).
+ * cria um ficheiro unificado de log num diretório configurado (ex: data/Log's/),
+ * numerar o ficheiro (ex: log_unificado1.txt, log_unificado2.txt, etc.).
  */
 public class LogController {
     public static void iniciar() {

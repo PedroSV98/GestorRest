@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class InputHelper {
     /**
-     * Lê um número inteiro do utilizador, solicitando novamente caso o valor inserido não seja um número inteiro.
+     * Lê um número inteiro do utilizador, solicitar novamente caso o valor inserido não seja um número inteiro.
      * @param scanner O objeto Scanner a ser utilizado para a leitura.
      * @param mensagem A mensagem a ser exibida ao utilizador.
      * @return O número inteiro inserido.
@@ -21,7 +21,7 @@ public class InputHelper {
     }
 
     /**
-     * Lê uma cadeia de caracteres (String) do utilizador, solicitando novamente caso a entrada seja inválida (vazia).
+     * Lê uma cadeia de caracteres (String) do utilizador, solicitar novamente caso a entrada seja inválida (vazia).
      * @param scanner O objeto Scanner a ser utilizado para a leitura.
      * @param mensagem A mensagem a ser exibida ao utilizador.
      * @return A cadeia de caracteres inserida.
@@ -38,13 +38,13 @@ public class InputHelper {
         }
     }
     /**
-     * Lê um valor booleano do utilizador, solicitando novamente caso a entrada não seja "true" ou "false".
+     * Lê um valor booleano do utilizador, solicitar novamente caso a entrada não seja "true" ou "false".
      * @param scanner O objeto Scanner a ser utilizado para a leitura.
      * @param mensagem A mensagem a ser exibida ao utilizador.
      * @return O valor booleano inserido.
      */
     /**
-     * Lê um valor do tipo double do utilizador, solicitando novamente caso a entrada seja inválida.
+     * Lê um valor do tipo double do utilizador, solicitar novamente caso a entrada seja inválida.
      * Aceita tanto ponto quanto vírgula como separador decimal.
      * @param scanner O objeto Scanner a ser utilizado para a leitura.
      * @param mensagem A mensagem a ser exibida ao utilizador.

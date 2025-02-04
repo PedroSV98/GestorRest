@@ -181,7 +181,7 @@ public class ControllerPrato {
     }
 
     /**
-     * Adiciona um novo prato a um array, criando um array maior em +1 posição.
+     * Adiciona um novo prato a um array, cria um array maior em +1 posição.
      */
     private Prato[] adicionarPrato(Prato[] originais, Prato novo) {
         Prato[] maior = new Prato[originais.length + 1];
