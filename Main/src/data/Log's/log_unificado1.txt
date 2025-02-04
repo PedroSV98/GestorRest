@@ -1,0 +1,455 @@
+LogController iniciado. A monitorizar entrada e saída (log unificado em C:\\Users\\pedr0\\Desktop\\GestorRest\\Main\\src\\data\\Log's\log_unificado1.txt).
+=== Gestão de Restaurante ===
+1. Gerir Mesas
+2. Gerir Menus
+3. Gerir Dia-a-Dia
+4. Configurações
+5. Sair
+Password atual: 1
+Escolha uma opção: 3
+
+=== Reservas no Tempo Atual (1) ===
+Cliente: Manuel Jesus, Pessoas: 5
+Cliente: Maria José, Pessoas: 2
+Cliente: Alberto Silva, Pessoas: 7
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 2
+
+=== Escolha o Tipo de Cliente ===
+1. Cliente com reserva
+2. Cliente espontâneo
+Selecione uma opção: 
+1
+
+=== Clientes com Reserva Elegíveis ===
+1. Manuel Jesus - 5 pessoas (Chegada: Tempo 1)
+2. Maria José - 2 pessoas (Chegada: Tempo 1)
+3. Alberto Silva - 7 pessoas (Chegada: Tempo 1)
+Selecione um cliente pelo número: 1
+
+=== Mesas Disponíveis ===
+1. Mesa 1 - Capacidade: 5 - Estado: Disponível
+2. Mesa 2 - Capacidade: 8 - Estado: Disponível
+3. Mesa 5 - Capacidade: 8 - Estado: Disponível
+4. Mesa 9 - Capacidade: 5 - Estado: Disponível
+Selecione uma mesa pelo número: 1
+Cliente Manuel Jesus foi encaminhado para a mesa 1
+
+=== Reservas no Tempo Atual (1) ===
+Cliente: Maria José, Pessoas: 2
+Cliente: Alberto Silva, Pessoas: 7
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 2
+
+=== Escolha o Tipo de Cliente ===
+1. Cliente com reserva
+2. Cliente espontâneo
+Selecione uma opção: 1
+
+=== Clientes com Reserva Elegíveis ===
+1. Maria José - 2 pessoas (Chegada: Tempo 1)
+2. Alberto Silva - 7 pessoas (Chegada: Tempo 1)
+Selecione um cliente pelo número: 1
+
+=== Mesas Disponíveis ===
+1. Mesa 2 - Capacidade: 8 - Estado: Disponível
+2. Mesa 3 - Capacidade: 4 - Estado: Disponível
+3. Mesa 4 - Capacidade: 4 - Estado: Disponível
+4. Mesa 5 - Capacidade: 8 - Estado: Disponível
+5. Mesa 6 - Capacidade: 2 - Estado: Disponível
+6. Mesa 7 - Capacidade: 2 - Estado: Disponível
+7. Mesa 8 - Capacidade: 4 - Estado: Disponível
+8. Mesa 9 - Capacidade: 5 - Estado: Disponível
+Selecione uma mesa pelo número: 5
+Cliente Maria José foi encaminhado para a mesa 6
+
+=== Reservas no Tempo Atual (1) ===
+Cliente: Alberto Silva, Pessoas: 7
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 1
+
+Tempo avançado para unidade: 2
+Agora o cliente Manuel Jesus pode escolher os pratos.
+Agora o cliente Maria José pode escolher os pratos.
+
+=== Reservas no Tempo Atual (2) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 3
+
+=== Clientes que podem escolher pratos ===
+1. Manuel Jesus - 5 pessoas
+2. Maria José - 2 pessoas
+Selecione um cliente pelo número: 1
+
+=== Escolha um prato de entrada ===
+1. Pão de alho | Tempo de preparo: 3 min
+2. Caldo Verde | Tempo de preparo: 1 min
+Selecione uma entrada pelo número (0 para nenhum): 1
+Quantidade: 3
+
+=== Escolha um prato principal ===
+1. Bacalhau com natas | Tempo de preparo: 3 min
+2. Francesinha de porco com ovo | Tempo de preparo: 2 min
+Selecione um prato principal pelo número (0 para nenhum): 1
+Quantidade: 5
+
+=== Escolha uma sobremesa ===
+1. Gelado de nata | Tempo de preparo: 1 min
+Selecione uma sobremesa pelo número (0 para nenhuma): 1
+Quantidade: 
+1
+Pedido atualizado! O cliente Manuel Jesus terá os pratos preparados.
+
+=== Reservas no Tempo Atual (2) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 3
+
+=== Clientes que podem escolher pratos ===
+1. Maria José - 2 pessoas
+Selecione um cliente pelo número: 1
+
+=== Escolha um prato de entrada ===
+1. Pão de alho | Tempo de preparo: 3 min
+2. Caldo Verde | Tempo de preparo: 1 min
+Selecione uma entrada pelo número (0 para nenhum): 2
+Quantidade: 1
+
+=== Escolha um prato principal ===
+1. Bacalhau com natas | Tempo de preparo: 3 min
+2. Francesinha de porco com ovo | Tempo de preparo: 2 min
+Selecione um prato principal pelo número (0 para nenhum): 1
+Quantidade: 4
+
+=== Escolha uma sobremesa ===
+1. Gelado de nata | Tempo de preparo: 1 min
+Selecione uma sobremesa pelo número (0 para nenhuma): 1
+Quantidade: 1
+Pedido atualizado! O cliente Maria José terá os pratos preparados.
+
+=== Reservas no Tempo Atual (2) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 1
+
+Tempo avançado para unidade: 3
+
+=== Reservas no Tempo Atual (3) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 1
+
+Tempo avançado para unidade: 4
+
+=== Reservas no Tempo Atual (4) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 1
+
+Tempo avançado para unidade: 5
+Os pratos do cliente Manuel Jesus terminaram de ser preparados.
+Os pratos do cliente Maria José terminaram de ser preparados.
+
+=== Reservas no Tempo Atual (5) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 1
+
+Tempo avançado para unidade: 6
+Cliente Manuel Jesus começou a consumir.
+Cliente Maria José começou a consumir.
+
+=== Reservas no Tempo Atual (6) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+Cliente: Paulo Andrade, Pessoas: 5
+Cliente: Ulisses, Pessoas: 2
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 1
+
+Tempo avançado para unidade: 7
+Cliente Maria José terminou o consumo.
+
+=== Reservas no Tempo Atual (7) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+Cliente: Paulo Andrade, Pessoas: 5
+Cliente: Ulisses, Pessoas: 2
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 1
+
+Tempo avançado para unidade: 8
+Cliente Maria José poderá pagar na unidade de tempo 8.
+
+=== Reservas no Tempo Atual (8) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+Cliente: Paulo Andrade, Pessoas: 5
+Cliente: Ulisses, Pessoas: 2
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 4
+
+=== Pagamento para Maria José ===
+Preço de Custo: 18.69
+Preço Total: 48.95
+Lucro: 30.26
+Confirmar pagamento? (S/N): s
+Mesa 6 agora está disponível.
+[LOG] Pagamento confirmado: Cliente=Maria José, Total=48.95
+Pagamento realizado com sucesso!
+
+=== Reservas no Tempo Atual (8) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+Cliente: Paulo Andrade, Pessoas: 5
+Cliente: Ulisses, Pessoas: 2
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 1
+
+Tempo avançado para unidade: 9
+Cliente Manuel Jesus terminou o consumo.
+
+=== Reservas no Tempo Atual (9) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+Cliente: Paulo Andrade, Pessoas: 5
+Cliente: Ulisses, Pessoas: 2
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 1
+
+Tempo avançado para unidade: 10
+Cliente Manuel Jesus poderá pagar na unidade de tempo 10.
+
+=== Reservas no Tempo Atual (10) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+Cliente: Paulo Andrade, Pessoas: 5
+Cliente: Ulisses, Pessoas: 2
+Cliente: David Oliveira, Pessoas: 7
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 4
+
+=== Pagamento para Manuel Jesus ===
+Preço de Custo: 27.07
+Preço Total: 64.92
+Lucro: 37.85
+Confirmar pagamento? (S/N): s
+Mesa 1 agora está disponível.
+[LOG] Pagamento confirmado: Cliente=Manuel Jesus, Total=64.92
+Pagamento realizado com sucesso!
+
+=== Reservas no Tempo Atual (10) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+Cliente: Paulo Andrade, Pessoas: 5
+Cliente: Ulisses, Pessoas: 2
+Cliente: David Oliveira, Pessoas: 7
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 5
+
+=== Relatório Financeiro ===
+Total faturado: 113.87€
+Total de gastos: 45.760000000000005€
+Lucro: 68.11€
+Pedidos atendidos: 2
+Pedidos não atendidos: 0
+Saldo do Restaurante: 68.11€
+
+=== Reservas no Tempo Atual (10) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+Cliente: Paulo Andrade, Pessoas: 5
+Cliente: Ulisses, Pessoas: 2
+Cliente: David Oliveira, Pessoas: 7
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 6
+
+=== Estatísticas Gerais ===
+Prato mais pedido: Bacalhau com natas
+Total de clientes atendidos: 2
+Tempo médio de espera por cliente: 0.0 unidades de tempo.
+Tempo médio para servir uma mesa: 7.0 unidades de tempo.
+
+=== Reservas no Tempo Atual (10) ===
+Cliente: Alberto Silva, Pessoas: 7
+Cliente: Beatriz Ribeiro, Pessoas: 4
+Cliente: Ana Fonseca, Pessoas: 2
+Cliente: Paulo Andrade, Pessoas: 5
+Cliente: Ulisses, Pessoas: 2
+Cliente: David Oliveira, Pessoas: 7
+
+=== Gestão do Dia-a-Dia ===
+1. Avançar Tempo
+2. Encaminhar Pedido
+3. Escolher Pratos para Pedido
+4. Processar Pagamentos
+5. Financeiro
+6. Estatísticas Gerais
+7. Sair
+Escolha uma opção: 7
+Encerrar Gestão do Dia-a-Dia...
+=== Gestão de Restaurante ===
+1. Gerir Mesas
+2. Gerir Menus
+3. Gerir Dia-a-Dia
+4. Configurações
+5. Sair
+Password atual: 1
+Escolha uma opção: 5
+Tem a Certeza Que Quer Sair? (S/N)
+s
+Encerrar a Aplicação...
+Configurações guardadas com sucesso!

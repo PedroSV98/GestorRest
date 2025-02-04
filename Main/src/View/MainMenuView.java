@@ -94,6 +94,9 @@ public class MainMenuView {
     }
 
     public static void main(String[] args) {
+        // Inicia o LogController para redirecionar a entrada e a saída para o ficheiro unificado
+        LogController.iniciar();
+
         MainMenuView menu = new MainMenuView();
         menu.exibirMenu();
     }
