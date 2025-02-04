@@ -1,0 +1,13 @@
+LogController iniciado. A monitorizar entrada e saída (log unificado em C:\\Users\\pedr0\\Desktop\\GestorRest\\Main\\src\\data\\Log's\log2.txt).
+=== Gestão de Restaurante ===
+1. Gerir Mesas
+2. Gerir Menus
+3. Gerir Dia-a-Dia
+4. Configurações
+5. Sair
+Password atual: 1
+Escolha uma opção: 5
+Tem a Certeza Que Quer Sair? (S/N)
+s
+Encerrar a Aplicação...
+Configurações guardadas com sucesso!
